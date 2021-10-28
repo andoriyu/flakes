@@ -25,7 +25,15 @@
       in
       with pkgs;
       {
-        overlay = final: prev: { };
+        overlay = final: prev: {
+          andoriyu.cargo-expand = prev.cargo-expand.override {
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            postInstall = ''
+              wrapProgram "$out/bin/cargo-expand" \
+              --prefix PATH : ${rust-bin.nightly.latest.minimal}/bin
+            '';
+          };
+        };
         devShell = pkgs.devshell.mkShell {
           packages = [
             openssl
