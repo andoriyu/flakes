@@ -12,16 +12,15 @@
     devshell.url = "github:numtide/devshell/master";
   };
   outputs = { self, nixpkgs, rust-overlay, flake-utils, devshell, ... }:
-  {
+  let
+    overlay = import ./overlay.nix;
+  in {
         templates."rust-lite" = { path = ./templates/rust-lite; description = "A light version of rust environment for devlopment"; };
-        templates."rust-wasm" = { path = ./templates/rust-wasm; description = "A fat version of rust environment for front-end devlopment"; };
+        templates."rust-wasm" = { path = ./templates/rust-wasm; description = "A fat version of rust environment with nodejs for full-stack devlopment"; };
+        overlay = final: prev: overlay final prev;
     } //
   flake-utils.lib.eachDefaultSystem (system:
       let
-        overlay = final: prev: {
-          cargo-expand-nightly = import ./packages/cargo-expand { inherit final prev; };
-          git-cliff = import ./packages/git-cliff { inherit final prev; };
-        };
         overlays = [ devshell.overlay rust-overlay.overlay overlay ];
         pkgs = import nixpkgs {
           inherit system overlays;
@@ -29,7 +28,6 @@
       in
       with pkgs;
       {
-        overlay = overlay;
         devShell = pkgs.devshell.mkShell {
           packages = [
             openssl
