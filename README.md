@@ -23,4 +23,9 @@ Current flake looks like this:
 ## Packages in overlay
 
  - git-cliff
- - cargo-expand-nightly
+ - cargo-expand-nightly (a wrapper around `cargo-expand`)
+
+## Templates
+
+Description is self-explanatory. However, worth mentioning that `rust-lite` and `rust-wasm` use `rust-toolchain.toml` file to figure which toolchain to use.
+That means you must include `rust-src` component youself in that file for any kind of editor support.
