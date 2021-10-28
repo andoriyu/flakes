@@ -38,6 +38,7 @@
             wasm-pack
             curl
             jq
+            cargo-expand-nightly
           ];
           bash = {
             extra = ''

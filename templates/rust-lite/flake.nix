@@ -35,6 +35,7 @@
             pkgconfig
             rust
             rust-analyzer
+            cargo-expand-nightly
           ];
           bash = {
             extra = ''

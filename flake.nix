@@ -18,22 +18,29 @@
     } //
   flake-utils.lib.eachDefaultSystem (system:
       let
-        overlays = [ devshell.overlay rust-overlay.overlay ];
+        overlay = final: prev: {
+          cargo-expand-nightly = let
+            pname = "cargo-expand";
+            version = final.cargo-expand.version;
+            cargo-expand = final.cargo-expand;
+          in final.runCommand "${pname}-${version}" {
+              inherit pname version;
+              inherit (cargo-expand) src meta;
+              nativeBuildInputs = [ final.makeWrapper ];
+          } ''
+            mkdir -p $out/bin
+            makeWrapper ${final.cargo-expand}/bin/cargo-expand $out/bin/cargo-expand \
+              --prefix PATH : ${final.pkgs.rust-bin.nightly.latest.minimal}/bin
+          '';
+        };
+        overlays = [ devshell.overlay rust-overlay.overlay overlay ];
         pkgs = import nixpkgs {
           inherit system overlays;
         };
       in
       with pkgs;
       {
-        overlay = final: prev: {
-          cargo-expand-nightly = prev.cargo-expand.override {
-            nativeBuildInputs = [ pkgs.makeWrapper ];
-            postInstall = ''
-              wrapProgram "$out/bin/cargo-expand" \
-              --prefix PATH : ${rust-bin.nightly.latest.minimal}/bin
-            '';
-          };
-        };
+        overlay = overlay;
         devShell = pkgs.devshell.mkShell {
           packages = [
             openssl
@@ -43,6 +50,7 @@
             wasm-pack
             curl
             jq
+            cargo-expand-nightly
             (rust-bin.stable.latest.default.override {
               extensions = [ "rust-src" ];
               targets = [ "wasm32-unknown-unknown" ];
