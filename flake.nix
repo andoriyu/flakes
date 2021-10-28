@@ -12,6 +12,10 @@
     devshell.url = "github:numtide/devshell/master";
   };
   outputs = { self, nixpkgs, rust-overlay, flake-utils, devshell, ... }:
+  {
+        templates."rust-lite" = { path = ./templates/rust-lite.nix; description = "A light version of rust environment for devlopment"; };
+        templates."rust-wasm" = { path = ./templates/rust-wasm.nix; description = "A fat version of rust environment for front-end devlopment"; };
+    } //
   flake-utils.lib.eachDefaultSystem (system:
       let
         overlays = [ devshell.overlay rust-overlay.overlay ];
@@ -21,15 +25,19 @@
       in
       with pkgs;
       {
+        overlays = {
+          devshell = devshell.overlay;
+          rust-overlay = devshell.overlay;
+        };
         devShell = pkgs.devshell.mkShell {
           packages = [
             openssl
             openssl.dev
             pkgconfig
             docker-compose
-            nodejs-16_x
             wasm-pack
-            yarn
+            curl
+            jq
             (rust-bin.stable.latest.default.override {
               extensions = [ "rust-src" ];
               targets = [ "wasm32-unknown-unknown" ];
@@ -67,7 +75,7 @@
             {
               name = "node";
               category = "javascript";
-              package = "nodejs";
+              package = "nodejs-16_x";
             }
             {
               name = "exa";
