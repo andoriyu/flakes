@@ -2,12 +2,10 @@
   description = "Minimal Rust Development Environment";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    flake-utils.url  = "github:numtide/flake-utils";
+    flake-utils.url = "github:numtide/flake-utils";
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-      };
+      inputs = { nixpkgs.follows = "nixpkgs"; };
     };
     andoriyu = {
       url = "github:andoriyu/flakes";
@@ -18,17 +16,14 @@
     };
     devshell.url = "github:numtide/devshell/master";
   };
-  outputs = { self, nixpkgs, rust-overlay, flake-utils, andoriyu, devshell, ... }:
-  flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    { self, nixpkgs, rust-overlay, flake-utils, andoriyu, devshell, ... }:
+    flake-utils.lib.eachDefaultSystem (system:
       let
         overlays = [ devshell.overlay rust-overlay.overlay andoriyu.overlay ];
-        pkgs = import nixpkgs {
-          inherit system overlays;
-        };
+        pkgs = import nixpkgs { inherit system overlays; };
         rust = pkgs.rust-bin.fromRustupToolchainFile "rust-toolchain.toml";
-      in
-      with pkgs;
-      {
+      in with pkgs; {
         devShell = pkgs.devshell.mkShell {
           packages = [
             openssl
@@ -36,14 +31,14 @@
             pkgconfig
             rust
             rust-analyzer
-         #   cargo-expand-nightly
+            #   cargo-expand-nightly
           ];
           bash = {
             extra = ''
               export LD_INCLUDE_PATH="$DEVSHELL_DIR/include"
               export LD_LIB_PATH="$DEVSHELL_DIR/lib"
-              '';
-            interactive = '''';
+            '';
+            interactive = "";
           };
           env = [
             {
@@ -66,7 +61,6 @@
             }
           ];
         };
-      }
-    );
+      });
 }
 
