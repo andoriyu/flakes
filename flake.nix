@@ -19,19 +19,7 @@
   flake-utils.lib.eachDefaultSystem (system:
       let
         overlay = final: prev: {
-          cargo-expand-nightly = let
-            pname = "cargo-expand";
-            version = final.cargo-expand.version;
-            cargo-expand = final.cargo-expand;
-          in final.runCommand "${pname}-${version}" {
-              inherit pname version;
-              inherit (cargo-expand) src meta;
-              nativeBuildInputs = [ final.makeWrapper ];
-          } ''
-            mkdir -p $out/bin
-            makeWrapper ${final.cargo-expand}/bin/cargo-expand $out/bin/cargo-expand \
-              --prefix PATH : ${final.pkgs.rust-bin.nightly.latest.minimal}/bin
-          '';
+          cargo-expand-nightly = import ./packages/cargo-expand { inherit final prev; };
           git-cliff = let
             base = pkgs.rust-bin.stable.latest;
             rustPlatform = pkgs.recurseIntoAttrs (pkgs.makeRustPlatform {
