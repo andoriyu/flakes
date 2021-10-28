@@ -20,9 +20,10 @@
     { self, nixpkgs, rust-overlay, flake-utils, andoriyu, devshell, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
+        cwd = builtins.toString ./.;
         overlays = [ devshell.overlay rust-overlay.overlay andoriyu.overlay ];
         pkgs = import nixpkgs { inherit system overlays; };
-        rust = pkgs.rust-bin.fromRustupToolchainFile "rust-toolchain.toml";
+        rust = pkgs.rust-bin.fromRustupToolchainFile "${cwd}/rust-toolchain.toml";
       in with pkgs; {
         devShell = pkgs.devshell.mkShell {
           packages = [
@@ -31,7 +32,7 @@
             pkgconfig
             rust
             rust-analyzer
-            #   cargo-expand-nightly
+            cargo-expand-nightly
           ];
           bash = {
             extra = ''
@@ -43,7 +44,7 @@
           env = [
             {
               name = "RUST_SRC_PATH";
-              value = "${rust.rust-src}/lib/rustlib/src/rust/library";
+              value = "${rust}/lib/rustlib/src/rust/library";
             }
             {
               name = "OPENSSL_DIR";

@@ -17,6 +17,7 @@
   in {
         templates."rust-lite" = { path = ./templates/rust-lite; description = "A light version of rust environment for devlopment"; };
         templates."rust-wasm" = { path = ./templates/rust-wasm; description = "A fat version of rust environment with nodejs for full-stack devlopment"; };
+        templates."fat" = { path = ./templates/rust-wasm; description = "A fat version of development environment. Right now rust-wasm + some extra packages"; };
         overlay = final: prev: overlay final prev;
     } //
   flake-utils.lib.eachDefaultSystem (system:
