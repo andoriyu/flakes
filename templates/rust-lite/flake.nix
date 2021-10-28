@@ -21,7 +21,7 @@
   outputs = { self, nixpkgs, rust-overlay, flake-utils, andoriyu, devshell, ... }:
   flake-utils.lib.eachDefaultSystem (system:
       let
-        overlays = [ devshell.overlay rust-overlay.overlay ];
+        overlays = [ devshell.overlay rust-overlay.overlay andoriyu.overlay ];
         pkgs = import nixpkgs {
           inherit system overlays;
         };
