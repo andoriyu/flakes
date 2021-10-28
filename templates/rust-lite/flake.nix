@@ -43,11 +43,11 @@
               '';
             interactive = '''';
           };
-          commands = [];
           env = [
             {
               name = "RUST_SRC_PATH";
-              value = "${rust.rust-src}/lib/rustlib/src/rust/library";
+              #value = "${rust.rust-src}/lib/rustlib/src/rust/library";
+              value = "DN";
             }
             {
               name = "OPENSSL_DIR";

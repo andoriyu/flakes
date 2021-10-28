@@ -26,7 +26,7 @@
       with pkgs;
       {
         overlay = final: prev: {
-          andoriyu.cargo-expand = prev.cargo-expand.override {
+          cargo-expand-nightly = prev.cargo-expand.override {
             nativeBuildInputs = [ pkgs.makeWrapper ];
             postInstall = ''
               wrapProgram "$out/bin/cargo-expand" \
