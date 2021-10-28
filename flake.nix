@@ -13,8 +13,8 @@
   };
   outputs = { self, nixpkgs, rust-overlay, flake-utils, devshell, ... }:
   {
-        templates."rust-lite" = { path = ./templates/rust-lite.nix; description = "A light version of rust environment for devlopment"; };
-        templates."rust-wasm" = { path = ./templates/rust-wasm.nix; description = "A fat version of rust environment for front-end devlopment"; };
+        templates."rust-lite" = { path = ./templates/rust-lite; description = "A light version of rust environment for devlopment"; };
+        templates."rust-wasm" = { path = ./templates/rust-wasm; description = "A fat version of rust environment for front-end devlopment"; };
     } //
   flake-utils.lib.eachDefaultSystem (system:
       let
@@ -25,10 +25,7 @@
       in
       with pkgs;
       {
-        overlays = {
-          devshell = devshell.overlay;
-          rust-overlay = devshell.overlay;
-        };
+        overlay = final: prev: { };
         devShell = pkgs.devshell.mkShell {
           packages = [
             openssl

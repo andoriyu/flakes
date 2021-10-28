@@ -15,11 +15,12 @@
         nixpkgs.follows = "nixpkgs";
       };
     };
+    devshell.url = "github:numtide/devshell/master";
   };
-  outputs = { self, nixpkgs, rust-overlay, flake-utils, devshell, ... }:
+  outputs = { self, nixpkgs, rust-overlay, flake-utils, devshell, andoriyu, ... }:
   flake-utils.lib.eachDefaultSystem (system:
       let
-        overlays = [ andoriyu.overlays.devshell rust-overlay.overlay andoriyu.overlay ];
+        overlays = [ devshell.overlay rust-overlay.overlay andoriyu.overlay ];
         pkgs = import nixpkgs {
           inherit system overlays;
         };
