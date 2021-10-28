@@ -10,11 +10,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1635381390,
-        "narHash": "sha256-UaBJ9lEwS0ywL/BOX2gtoFI7WSx7byqPhmYwT0xrm7A=",
+        "lastModified": 1635382728,
+        "narHash": "sha256-ZxFJ9JhNdWnyy4l62UErW0yp3K/ObhOAPI1zPCVP+2o=",
         "owner": "andoriyu",
         "repo": "flakes",
-        "rev": "44414cb6add491930d4dcf2b33087934178aa59e",
+        "rev": "522fcfa4b8aedbc8d0308fc9f3284437b82193a2",
         "type": "github"
       },
       "original": {

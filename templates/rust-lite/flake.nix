@@ -13,6 +13,7 @@
       url = "github:andoriyu/flakes";
       inputs = {
         nixpkgs.follows = "nixpkgs";
+        rust-overlay.follows = "rust-overlay";
       };
     };
     devshell.url = "github:numtide/devshell/master";
@@ -20,7 +21,7 @@
   outputs = { self, nixpkgs, rust-overlay, flake-utils, andoriyu, devshell, ... }:
   flake-utils.lib.eachDefaultSystem (system:
       let
-        overlays = [ devshell.overlay rust-overlay.overlay andoriyu.overlay ];
+        overlays = [ devshell.overlay rust-overlay.overlay ];
         pkgs = import nixpkgs {
           inherit system overlays;
         };
@@ -35,7 +36,7 @@
             pkgconfig
             rust
             rust-analyzer
-            cargo-expand-nightly
+         #   cargo-expand-nightly
           ];
           bash = {
             extra = ''
@@ -47,8 +48,7 @@
           env = [
             {
               name = "RUST_SRC_PATH";
-              #value = "${rust.rust-src}/lib/rustlib/src/rust/library";
-              value = "DN";
+              value = "${rust.rust-src}/lib/rustlib/src/rust/library";
             }
             {
               name = "OPENSSL_DIR";

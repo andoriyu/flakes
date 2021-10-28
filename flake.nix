@@ -32,6 +32,34 @@
             makeWrapper ${final.cargo-expand}/bin/cargo-expand $out/bin/cargo-expand \
               --prefix PATH : ${final.pkgs.rust-bin.nightly.latest.minimal}/bin
           '';
+          git-cliff = let
+            base = pkgs.rust-bin.stable.latest;
+            rustPlatform = pkgs.recurseIntoAttrs (pkgs.makeRustPlatform {
+              rustc = base.minimal;
+              cargo = base.minimal;
+            });
+          in rustPlatform.buildRustPackage rec {
+            pname = "git-cliff";
+            version = "0.4.2";
+
+            doCheck = false;
+
+            src = final.fetchFromGitHub {
+              owner = "orhun";
+              repo = pname;
+              rev = "v${version}";
+              sha256 = "sha256-FCBNm51QI1jDdq2BZFwZA1kpIfXIvh1ickmY3ZqwGPY=";
+            };
+
+            cargoSha256 = "sha256-CBCyujJHWTatJO+Tk6MyOk12B0cY1JSwLQizjcXeQzQ=";
+
+            meta = with final.lib; {
+              description = "git-cliff can generate changelog files from the Git history by utilizing conventional commits as well as regex-powered custom parsers. The changelog template can be customized with a configuration file to match the desired format.";
+              homepage = "https://github.com/orhun/git-cliff";
+              license = licenses.gpl3;
+              maintainers = [ "andoriyu@gmail.com" ];
+            };
+          };
         };
         overlays = [ devshell.overlay rust-overlay.overlay overlay ];
         pkgs = import nixpkgs {
@@ -50,7 +78,9 @@
             wasm-pack
             curl
             jq
-            cargo-expand-nightly
+            cargo-expand-nightly # wrapped cargo that uses nightly rustc regardless off current toolchain
+            cargo-release
+            git-cliff
             (rust-bin.stable.latest.default.override {
               extensions = [ "rust-src" ];
               targets = [ "wasm32-unknown-unknown" ];
