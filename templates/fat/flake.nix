@@ -21,7 +21,7 @@
   outputs = { self, nixpkgs, rust-overlay, flake-utils, andoriyu, devshell, ... }:
   flake-utils.lib.eachDefaultSystem (system:
       let
-        overlays = [ devshell.overlay rust-overlay.overlay andoriyu.overlay ];
+        overlays = [ devshell.overlay rust-overlay.overlay andoriyu.overlay andoriyu.overlays.rust-analyzer ];
         pkgs = import nixpkgs {
           inherit system overlays;
         };
@@ -44,7 +44,7 @@
               extensions = [ "rust-src" ];
               targets = [ "wasm32-unknown-unknown" ];
             })
-            rust-analyzer
+            andoriyu-ra.rust-analyzer.latest
           ];
           bash = {
             extra = ''

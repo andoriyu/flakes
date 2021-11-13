@@ -14,15 +14,19 @@
   outputs = { self, nixpkgs, rust-overlay, flake-utils, devshell, ... }:
   let
     overlay = import ./overlay.nix;
+    ra_overlay = import ./ra-overlay.nix;
   in {
         templates."rust-lite" = { path = ./templates/rust-lite; description = "A light version of rust environment for devlopment"; };
         templates."rust-wasm" = { path = ./templates/rust-wasm; description = "A fat version of rust environment with nodejs for full-stack devlopment"; };
         templates."fat" = { path = ./templates/rust-wasm; description = "A fat version of development environment. Right now rust-wasm + some extra packages"; };
         overlay = final: prev: overlay final prev;
+        overlays= {
+          rust-analyzer = fina: prev: ra_overlay fina prev;
+        };
     } //
   flake-utils.lib.eachDefaultSystem (system:
       let
-        overlays = [ devshell.overlay rust-overlay.overlay overlay ];
+        overlays = [ devshell.overlay rust-overlay.overlay overlay ra_overlay ];
         pkgs = import nixpkgs {
           inherit system overlays;
         };
@@ -31,6 +35,8 @@
       {
         devShell = pkgs.devshell.mkShell {
           packages = [
+            andoriyu-ra.rust-analyzer.latest
+            binutils
             openssl
             openssl.dev
             pkgconfig
@@ -45,7 +51,6 @@
               extensions = [ "rust-src" ];
               targets = [ "wasm32-unknown-unknown" ];
             })
-            rust-analyzer
           ];
           bash = {
             extra = ''

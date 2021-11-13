@@ -21,7 +21,7 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         cwd = builtins.toString ./.;
-        overlays = [ devshell.overlay rust-overlay.overlay andoriyu.overlay ];
+        overlays = [ devshell.overlay rust-overlay.overlay andoriyu.overlay andoriyu.overlays.rust-analyzer ];
         pkgs = import nixpkgs { inherit system overlays; };
         rust = pkgs.rust-bin.fromRustupToolchainFile "${cwd}/rust-toolchain.toml";
       in with pkgs; {
@@ -31,7 +31,7 @@
             openssl.dev
             pkgconfig
             rust
-            rust-analyzer
+            andoriyu-ra.rust-analyzer.latest
             cargo-expand-nightly
           ];
           bash = {
