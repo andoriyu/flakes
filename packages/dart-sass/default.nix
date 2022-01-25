@@ -26,12 +26,12 @@ self.stdenv.mkDerivation rec {
     fixupPhase = ''
         patchelf \
             --set-interpreter ${binutils.dynamicLinker} \
-            $out/src/dart
+            $out/bin/dart
     '';
     
     installPhase = ''
         mkdir -p $out/bin
-        cp -r . $out
-        ln -s $out/dart-sass/sass $out/bin/sass
+        cp $src/dart-sass/sass $out/bin/sass
+        chmod +x $out/bin/sass
     '';
 }
