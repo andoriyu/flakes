@@ -26,7 +26,7 @@ self.stdenv.mkDerivation rec {
       autoPatchelfHook
     ];
 
-    sourceRoot = ".";
+    sourceRoot = "./dart-sass";
     installPhase = ''
         install -m755 -D sass $out/bin/sass
     '';
