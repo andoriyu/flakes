@@ -21,18 +21,13 @@ self.stdenv.mkDerivation rec {
         ];
     };
 
-    phases = "unpackPhase installPhase fixupPhase";
+    phases = "unpackPhase installPhase";
+    nativeBuildInputs = [
+      autoPatchelfHook
+    ];
 
-    fixupPhase = ''
-        patchelf \
-            --set-interpreter ${binutils.dynamicLinker} \
-            $out/bin/dart
-    '';
-    
+    sourceRoot = ".";
     installPhase = ''
-        mkdir -p $out/bin
-        ls $src
-        cp $src/sass $out/bin/sass
-        chmod +x $out/bin/sass
+        install -m755 -D sass $out/bin/sass
     '';
 }
