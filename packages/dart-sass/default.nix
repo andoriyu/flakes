@@ -9,7 +9,6 @@ with pkgs;
 self.stdenv.mkDerivation rec {
     name = "dart-sass-${version}";
     inherit version;
-    system = "x86_64-linux";
     
     isExecutable = true;
 
