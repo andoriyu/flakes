@@ -1,4 +1,4 @@
-name: Validate Flake
+name: Validate Flake & Packages
 on: push
 jobs:
   validate-flake:
@@ -22,4 +22,4 @@ jobs:
         with:
           nix_version: 2.4
           nix_conf: experimental-features = nix-command flakes
-      - run: nix build .#${{matrix.pkg}} || ls -lsa /nix/store/lky0g3fzm3i9923yxjpig4cv2p8hxbsf-dart-sass-1.49.0-linux-x64.tar.gz
+      - run: nix build .#${{matrix.pkg}}
