@@ -33,6 +33,10 @@
       in
       with pkgs;
       {
+        packages = {
+          git-cliff = git-cliff;
+          dart-sass = dart-sass;
+        };
         devShell = pkgs.devshell.mkShell {
           packages = [
             andoriyu-ra.rust-analyzer.latest
