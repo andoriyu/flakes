@@ -37,6 +37,7 @@
           packages = [
             andoriyu-ra.rust-analyzer.latest
             binutils
+            dart-sass
             openssl
             openssl.dev
             pkgconfig
