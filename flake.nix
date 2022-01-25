@@ -1,74 +1,4 @@
-{
-  description = "Flakey";
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    flake-utils.url  = "github:numtide/flake-utils";
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-      };
-    };
-    devshell.url = "github:numtide/devshell/master";
-  };
-  outputs = { self, nixpkgs, rust-overlay, flake-utils, devshell, ... }:
-  let
-    overlay = import ./overlay.nix;
-    ra_overlay = import ./ra-overlay.nix;
-  in {
-        templates."rust-lite" = { path = ./templates/rust-lite; description = "A light version of rust environment for devlopment"; };
-        templates."rust-wasm" = { path = ./templates/rust-wasm; description = "A fat version of rust environment with nodejs for full-stack devlopment"; };
-        templates."fat" = { path = ./templates/rust-wasm; description = "A fat version of development environment. Right now rust-wasm + some extra packages"; };
-        overlay = final: prev: overlay final prev;
-        overlays= {
-          rust-analyzer = final: prev: ra_overlay final prev;
-        };
-    } //
-  flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
-      let
-        overlays = [ devshell.overlay rust-overlay.overlay overlay ra_overlay ];
-        pkgs = import nixpkgs {
-          inherit system overlays;
-        };
-      in
-      with pkgs;
-      {
-        devShell = pkgs.devshell.mkShell {
-          packages = [
-            andoriyu-ra.rust-analyzer.latest
-            binutils
-            dart-sass
-            openssl
-            openssl.dev
-            pkgconfig
-            docker-compose
-            wasm-pack
-            curl
-            jq
-            cargo-expand-nightly # wrapped cargo that uses nightly rustc regardless off current toolchain
-            cargo-release
-            git-cliff
-            (rust-bin.stable.latest.default.override {
-              extensions = [ "rust-src" ];
-              targets = [ "wasm32-unknown-unknown" ];
-            })
-          ];
-          bash = {
-            extra = ''
-              export LD_INCLUDE_PATH="$DEVSHELL_DIR/include"
-              export LD_LIB_PATH="$DEVSHELL_DIR/lib"
-              '';
-            interactive = '''';
-          };
-          commands = [
-            {
-              name = "up";
-              category = "docker";
-              command = "docker-compose up -d";
-            }
-            {
-              name = "down";
-              category = "docker";
+
               command = "docker-compose down";
             }
             {
@@ -131,4 +61,3 @@
       }
     );
 }
-
