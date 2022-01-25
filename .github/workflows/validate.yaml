@@ -7,7 +7,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: nixbuild/nix-quick-install-action@v9
         with:
-          nix_version: 2.6
+          nix_version: 2.4
           nix_conf: experimental-features = nix-command flakes
       - run: nix flake check --show-trace
   build:
@@ -20,6 +20,6 @@ jobs:
       - uses: actions/checkout@v2
       - uses: nixbuild/nix-quick-install-action@v9
         with:
-          nix_version: 2.6
+          nix_version: 2.4
           nix_conf: experimental-features = nix-command flakes
       - run: nix build .#${{matrix.pkg}}
