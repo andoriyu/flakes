@@ -21,10 +21,10 @@
         templates."fat" = { path = ./templates/rust-wasm; description = "A fat version of development environment. Right now rust-wasm + some extra packages"; };
         overlay = final: prev: overlay final prev;
         overlays= {
-          rust-analyzer = fina: prev: ra_overlay fina prev;
+          rust-analyzer = final: prev: ra_overlay final prev;
         };
     } //
-  flake-utils.lib.eachDefaultSystem (system:
+  flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
       let
         overlays = [ devshell.overlay rust-overlay.overlay overlay ra_overlay ];
         pkgs = import nixpkgs {

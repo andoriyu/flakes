@@ -1,0 +1,25 @@
+name: Validate Flake & Packages
+on: push
+jobs:
+  validate-flake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: nixbuild/nix-quick-install-action@v9
+        with:
+          nix_version: 2.4
+          nix_conf: experimental-features = nix-command flakes
+      - run: nix flake check --show-trace
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        pkg: ["git-cliff", "dart-sass"]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - uses: nixbuild/nix-quick-install-action@v9
+        with:
+          nix_version: 2.4
+          nix_conf: experimental-features = nix-command flakes
+      - run: nix build .#${{matrix.pkg}}
