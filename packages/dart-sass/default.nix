@@ -32,6 +32,6 @@ self.stdenv.mkDerivation rec {
     installPhase = ''
         mkdir -p $out/bin
         cp -r . $out
-        ln -s $out/sass $out/bin/sass
+        ln -s $out/dart-sass/sass $out/bin/sass
     '';
 }
