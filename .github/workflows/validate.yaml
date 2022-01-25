@@ -9,5 +9,4 @@ jobs:
         with:
           nix_version: 2.4
           nix_conf: experimental-features = nix-command flakes
-      - name: nix build
-        run: nix build ./
+      - run: nix flake check
