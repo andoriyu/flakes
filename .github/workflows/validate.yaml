@@ -10,8 +10,6 @@ jobs:
           nix_version: 2.4
           nix_conf: experimental-features = nix-command flakes
       - run: nix flake check --show-trace
-      - run: nix build .#git-cliff
-      - run: nix build .#git-cliff
   build:
     runs-on: ubuntu-latest
     strategy:
