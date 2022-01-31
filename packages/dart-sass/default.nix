@@ -21,13 +21,15 @@ self.stdenv.mkDerivation rec {
         ];
     };
 
-    phases = "unpackPhase installPhase";
-    nativeBuildInputs = [
-      autoPatchelfHook
-    ];
+    phases = "unpackPhase installPhase fixupPhase";
 
     sourceRoot = "./dart-sass";
     installPhase = ''
         install -m755 -D sass $out/bin/sass
+    '';
+    fixupPhase = ''
+        patchelf \
+            --set-interpreter ${binutils.dynamicLinker} \
+            $out/bin/sass
     '';
 }
