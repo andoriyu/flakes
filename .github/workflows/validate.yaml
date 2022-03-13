@@ -1,5 +1,14 @@
+---
 name: Validate Flake & Packages
-on: push
+on:
+  pull_request:
+    # Sequence of patterns matched against refs/heads
+    branches:
+      - main
+  workflow_dispatch:  # allows manual triggering
+  schedule:
+    - cron: '0 0 * * 0'  # runs weekly on Sunday at 00:00
+
 jobs:
   validate-flake:
     runs-on: ubuntu-latest
@@ -22,4 +31,8 @@ jobs:
         with:
           nix_version: 2.4
           nix_conf: experimental-features = nix-command flakes
-      - run: nix build .#${{matrix.pkg}}
+      - uses: cachix/cachix-action@v10
+        with:
+          name: andoriyu-flakes
+          authToken: ${{ secrets.CACHIX_TOKEN }}
+      - run: cachix watch-exec andoriyu-flakes nix build .#${{matrix.pkg}}
