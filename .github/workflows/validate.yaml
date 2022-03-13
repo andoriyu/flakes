@@ -56,5 +56,5 @@ jobs:
           | cachix push andoriyu-flakes
       - name: Cache dev-shell
         run: |
-          nix develop --profile dev-profile
+          nix develop --profile dev-profile && \
           cachix push andoriyu-flakes dev-profile
