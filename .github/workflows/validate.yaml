@@ -1,3 +1,4 @@
+---
 name: Validate Flake & Packages
 on: push
 jobs:
@@ -22,4 +23,8 @@ jobs:
         with:
           nix_version: 2.4
           nix_conf: experimental-features = nix-command flakes
-      - run: nix build .#${{matrix.pkg}}
+      - uses: cachix/cachix-action
+        with:
+          name: andoriyu-flakes
+          authToken: ${{ secrets.CACHIX_TOKEN }}
+      - run: cachix watch-exec andoriyu-flakes nix build .#${{matrix.pkg}}
