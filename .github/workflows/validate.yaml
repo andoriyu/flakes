@@ -51,8 +51,8 @@ jobs:
           authToken: ${{ secrets.CACHIX_TOKEN }}
       - name: Cache flake inputs
         run: |
-          nix flake archive --json
-          | jq -r '.path,(.inputs|to_entries[].value.path)'
+          nix flake archive --json \
+          | jq --raw-output '.path, (.inputs | to_entries [] .value.path)' \
           | cachix push andoriyu-flakes
       - name: Cache dev-shell
         run: |
