@@ -23,7 +23,7 @@ jobs:
         with:
           nix_version: 2.4
           nix_conf: experimental-features = nix-command flakes
-      - uses: cachix/cachix-action
+      - uses: cachix/cachix-action@v10
         with:
           name: andoriyu-flakes
           authToken: ${{ secrets.CACHIX_TOKEN }}
