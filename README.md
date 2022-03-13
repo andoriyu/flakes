@@ -15,6 +15,13 @@ Current flake looks like this:
     ├───rust-lite: template: A light version of rust environment for devlopment
     └───rust-wasm: template: A fat version of rust environment with nodejs for full-stack devlopment
 ```
+## Cachix
+
+```
+cachix use andoriyu-flakes
+```
+
+NOTE: Not every package is cached. 
 
 ## Default devShell
 
