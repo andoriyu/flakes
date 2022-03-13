@@ -36,3 +36,25 @@ jobs:
           name: andoriyu-flakes
           authToken: ${{ secrets.CACHIX_TOKEN }}
       - run: cachix watch-exec andoriyu-flakes nix build .#${{matrix.pkg}}
+  cache:
+    runs-on: ubuntu-latest
+    needs: [validate-flake, build]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: nixbuild/nix-quick-install-action@v9
+        with:
+          nix_version: 2.4
+          nix_conf: experimental-features = nix-command flakes
+      - uses: cachix/cachix-action@v10
+        with:
+          name: andoriyu-flakes
+          authToken: ${{ secrets.CACHIX_TOKEN }}
+      - name: Cache flake inputs
+        run: |
+          nix flake archive --json
+          | jq -r '.path,(.inputs|to_entries[].value.path)'
+          | cachix push andoriyu-flakes
+      - name: Cache dev-shell
+        run: |
+          nix develop --profile dev-profile
+          cachix push andoriyu-flakes dev-profile
