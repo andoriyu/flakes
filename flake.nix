@@ -36,6 +36,7 @@
         packages = {
           git-cliff = git-cliff;
           dart-sass = dart-sass;
+          atlas = atlas;
         };
         devShell = pkgs.devshell.mkShell {
           packages = [
@@ -51,6 +52,7 @@
             cargo-expand-nightly # wrapped cargo that uses nightly rustc regardless off current toolchain
             cargo-release
             git-cliff
+            atlas
             (rust-bin.stable.latest.default.override {
               extensions = [ "rust-src" ];
               targets = [ "wasm32-unknown-unknown" ];
