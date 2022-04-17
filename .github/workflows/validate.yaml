@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        pkg: ["git-cliff", "dart-sass", "atlas"]
+        pkg: ["git-cliff", "dart-sass", "atlas", "cargo-expand-nightly"]
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
