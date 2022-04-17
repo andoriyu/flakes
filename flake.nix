@@ -19,9 +19,9 @@
         templates."rust-lite" = { path = ./templates/rust-lite; description = "A light version of rust environment for devlopment"; };
         templates."rust-wasm" = { path = ./templates/rust-wasm; description = "A fat version of rust environment with nodejs for full-stack devlopment"; };
         templates."fat" = { path = ./templates/rust-wasm; description = "A fat version of development environment. Right now rust-wasm + some extra packages"; };
-        overlay = final: prev: overlay final prev;
+        inherit overlay;
         overlays= {
-          rust-analyzer = final: prev: ra_overlay final prev;
+          rust-analyzer = ra_overlay;
         };
     } //
   flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
@@ -34,13 +34,12 @@
       with pkgs;
       {
         packages = {
-          git-cliff = git-cliff;
-          dart-sass = dart-sass;
-          atlas = atlas;
+          inherit git-cliff;
+          inherit dart-sass;
+          inherit atlas;
         };
         devShell = pkgs.devshell.mkShell {
           packages = [
-            andoriyu-ra.rust-analyzer.latest
             binutils
             openssl
             openssl.dev
@@ -49,13 +48,11 @@
             wasm-pack
             curl
             jq
-            cargo-expand-nightly # wrapped cargo that uses nightly rustc regardless off current toolchain
             cargo-release
             git-cliff
             atlas
             (rust-bin.stable.latest.default.override {
               extensions = [ "rust-src" ];
-              targets = [ "wasm32-unknown-unknown" ];
             })
           ];
           bash = {
