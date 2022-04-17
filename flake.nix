@@ -37,6 +37,7 @@
           inherit git-cliff;
           inherit dart-sass;
           inherit atlas;
+          inherit cargo-expand-nightly;
         };
         devShell = pkgs.devshell.mkShell {
           packages = [
