@@ -1,8 +1,8 @@
 {final, prev, ...}:
 let
   pname = "cargo-expand";
-  cargo-expand = prev.cargo-expand;
-  version = cargo-expand.version;
+  inherit (prev) cargo-expand;
+  inherit (cargo-expand) version;
 in final.runCommand "${pname}-${version}" {
               inherit pname version;
               inherit (cargo-expand) src meta;
