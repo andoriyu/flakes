@@ -7,12 +7,13 @@
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    devshell.url = "github:numtide/devshell/master";
-    nix-dart.url = "github:tadfisher/nix-dart";
+    nix-dart = {
+      url = "github:tadfisher/nix-dart";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
-  outputs = { self, nixpkgs, flake-utils, devshell, nix-dart, fenix, ... }:
+  outputs = { self, nixpkgs, flake-utils, nix-dart, fenix, ... }:
     let
-      overlay = import ./overlay.nix;
       systems = [ "x86_64-linux" "aarch64-linux" ];
     in
     {
@@ -22,7 +23,7 @@
     } //
     flake-utils.lib.eachSystem systems (system:
       let
-        overlays = [ nix-dart.overlay devshell.overlay nix-dart.overlay overlay ];
+        overlays = [ nix-dart.overlay ];
         pkgs = import nixpkgs {
           inherit system overlays;
         };
@@ -37,7 +38,7 @@
       {
         packages = rec {
           atlas = callPackage ./packages/atlas/default.nix { };
-          dart-sass = dart-sass-1_49_9;
+          dart-sass = dart-sass-1_52_1;
           git-cliff = callPackage ./packages/git-cliff { rustPlatform = rustPlatformStable; };
           cargo-expand-nightly = callPackage ./packages/cargo-expand { toolchain = fenix.packages.${system}.minimal; };
           dart-sass-1_52_1 = callPackage ./packages/dart-sass/from-source.nix {
@@ -52,99 +53,6 @@
             sha256 = "sha256-FBcXlurgVDqcVPWPpXR2SGBc4SestGv9yovkFmiW5Gs=";
             lockFile = ./packages/dart-sass/1_49_9/pub2nix.lock;
           };
-
-        };
-        devShell = pkgs.devshell.mkShell {
-          packages = [
-            binutils
-            openssl
-            openssl.dev
-            pkgconfig
-            docker-compose
-            wasm-pack
-            curl
-            jq
-            cargo-release
-            git-cliff
-            atlas
-            (rust-bin.stable.latest.default.override {
-              extensions = [ "rust-src" ];
-            })
-          ];
-          bash = {
-            extra = ''
-              export LD_INCLUDE_PATH="$DEVSHELL_DIR/include"
-              export LD_LIB_PATH="$DEVSHELL_DIR/lib"
-            '';
-            interactive = '''';
-          };
-          commands = [
-            {
-              name = "up";
-              category = "docker";
-              command = "docker-compose up -d";
-            }
-            {
-              name = "down";
-              category = "docker";
-              command = "docker-compose down";
-            }
-            {
-              name = "restart";
-              category = "docker";
-              command = "docker-compose restart";
-            }
-            {
-              name = "yarn";
-              category = "javascript";
-              package = "yarn";
-            }
-            {
-              name = "node";
-              category = "javascript";
-              package = "nodejs-16_x";
-            }
-            {
-              name = "exa";
-              category = "utility";
-              package = "exa";
-            }
-            {
-              name = "fd";
-              category = "utility";
-              package = "fd";
-            }
-            {
-              name = "rg";
-              category = "utility";
-              package = "ripgrep";
-            }
-
-          ];
-          env = [
-            {
-              name = "RUST_SRC_PATH";
-              value = "${rust-bin.stable.latest.rust-src}/lib/rustlib/src/rust/library";
-            }
-            {
-              name = "NODE_ENV";
-              value = "development";
-            }
-            {
-              name = "OPENSSL_DIR";
-              value = "${openssl.bin}/bin";
-            }
-
-            {
-              name = "OPENSSL_LIB_DIR";
-              value = "${openssl.out}/lib";
-            }
-
-            {
-              name = "OPENSSL_INCLUDE_DIR";
-              value = "${openssl.out.dev}/include";
-            }
-          ];
         };
       }
     );
