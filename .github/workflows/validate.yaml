@@ -39,6 +39,7 @@ jobs:
         run: |
          DEBIAN_FRONTEND=noninteractive
          sudo apt-get update -q -y && sudo apt-get install -q -y qemu-system-aarch64 qemu-efi binfmt-support qemu-user-static
+         sudo update-binfmts --display
       - uses: cachix/cachix-action@v10
         with:
           name: andoriyu-flakes
