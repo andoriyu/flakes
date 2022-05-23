@@ -1,15 +1,15 @@
-{ pkgs, toolchain, ... }:
+{ cargo-expand, runCommand, makeWrapper, toolchain, ... }:
 let
-  pname = pkgs.cargo-expand.pname;
-  version = pkgs.cargo-expand.version;
+  pname = cargo-expand.pname;
+  version = cargo-expand.version;
 in
-pkgs.runCommand "${pname}-${version}"
+runCommand "${pname}-${version}"
 {
-  inherit (pkgs.cargo-expand) src meta pname version;
-  nativeBuildInputs = [ pkgs.makeWrapper ];
+  inherit (cargo-expand) src meta pname version;
+  nativeBuildInputs = [ makeWrapper ];
 } ''
   mkdir -p $out/bin
-  makeWrapper ${pkgs.cargo-expand}/bin/cargo-expand $out/bin/cargo-expand \
-    --prefix PATH : ${toolchain}/bin
+  makeWrapper ${cargo-expand}/bin/cargo-expand $out/bin/cargo-expand \
+    --prefix PATH : ${toolchain.toolchain}/bin
 ''
 
