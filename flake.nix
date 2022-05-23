@@ -33,6 +33,7 @@
         rustPlatformStable = (pkgs.makeRustPlatform {
           inherit (fenix.packages.${system}.minimal) cargo rustc;
         });
+
       in
       with pkgs;
       {
@@ -41,17 +42,12 @@
           dart-sass = dart-sass-1_52_1;
           git-cliff = callPackage ./packages/git-cliff { rustPlatform = rustPlatformStable; };
           cargo-expand-nightly = callPackage ./packages/cargo-expand { toolchain = fenix.packages.${system}.minimal; };
-          dart-sass-1_52_1 = callPackage ./packages/dart-sass/from-source.nix {
-            buildDartPackage = nix-dart.builders.${system}.buildDartPackage;
+          dart-sass-1_52_1 = callPackage ./packages/dart-sass {
             version = "1.52.1";
-            sha256 = "sha256-fgxiAP8WbSqpLyod4aLK1pQpVtwEhF5ZYpUeheQNvVA=";
-            lockFile = ./packages/dart-sass/1_52_1/pub2nix.lock;
-          };
-          dart-sass-1_49_9 = callPackage ./packages/dart-sass/from-source.nix {
-            buildDartPackage = nix-dart.builders.${system}.buildDartPackage;
-            version = "1.49.9";
-            sha256 = "sha256-FBcXlurgVDqcVPWPpXR2SGBc4SestGv9yovkFmiW5Gs=";
-            lockFile = ./packages/dart-sass/1_49_9/pub2nix.lock;
+            platformsSha256 = {
+              aarch64-linux = "sha256-ekK7BdPxD1BUG8dOusQeQcq8JHEWkYuT6glUo+VTGSs=";
+              x86_64-linux = "sha256-bok8Cehj50oot3uAnPY6mbLRRyRhGFjY8+VJEOGgadg=";
+            };
           };
         };
       }
