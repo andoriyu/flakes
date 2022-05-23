@@ -2,7 +2,7 @@
   description = "Minimal Rust Development Environment";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    flake-utils.url  = "github:numtide/flake-utils";
+    flake-utils.url = "github:numtide/flake-utils";
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
       inputs = {
@@ -18,7 +18,7 @@
     devshell.url = "github:numtide/devshell/master";
   };
   outputs = { self, nixpkgs, rust-overlay, flake-utils, devshell, andoriyu, ... }:
-  flake-utils.lib.eachDefaultSystem (system:
+    flake-utils.lib.eachDefaultSystem (system:
       let
         cwd = builtins.toString ./.;
         overlays = [ devshell.overlay rust-overlay.overlay andoriyu.overlay andoriyu.overlays.rust-analyzer ];
@@ -45,7 +45,7 @@
             extra = ''
               export LD_INCLUDE_PATH="$DEVSHELL_DIR/include"
               export LD_LIB_PATH="$DEVSHELL_DIR/lib"
-              '';
+            '';
             interactive = '''';
           };
           commands = [

@@ -1,15 +1,15 @@
-{final, prev, ...}:
+{ cargo-expand, runCommand, makeWrapper, toolchain, ... }:
 let
-  pname = "cargo-expand";
-  inherit (prev) cargo-expand;
-  inherit (cargo-expand) version;
-in final.runCommand "${pname}-${version}" {
-              inherit pname version;
-              inherit (cargo-expand) src meta;
-              nativeBuildInputs = [ final.makeWrapper ];
+  pname = cargo-expand.pname;
+  version = cargo-expand.version;
+in
+runCommand "${pname}-${version}"
+{
+  inherit (cargo-expand) src meta pname version;
+  nativeBuildInputs = [ makeWrapper ];
 } ''
   mkdir -p $out/bin
   makeWrapper ${cargo-expand}/bin/cargo-expand $out/bin/cargo-expand \
-    --prefix PATH : ${prev.pkgs.rust-bin.nightly.latest.minimal}/bin
-  ''
+    --prefix PATH : ${toolchain.toolchain}/bin
+''
 

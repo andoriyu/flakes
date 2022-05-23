@@ -12,18 +12,18 @@ buildGoModule rec {
   doCheck = false;
   subPackages = [ "cmd/atlas" ];
   meta = with lib; {
-      description = "Atlas is a CLI designed to help companies better work with their data.";
-      homepage = "https://github.com/ariga/atlas";
-      license = licenses.asl20;
-      maintainers = [ "andoriyu@gmail.com" ];
+    description = "Atlas is a CLI designed to help companies better work with their data.";
+    homepage = "https://github.com/ariga/atlas";
+    license = licenses.asl20;
+    maintainers = [ "andoriyu@gmail.com" ];
   };
 
   postInstall = ''
-        # remove all plugins, they are part of the main binary now
-        for i in $out/bin/*; do
-          if [[ $(basename $i) != atlas ]]; then
-            rm "$i"
-          fi
-        done
-      '';
+    # remove all plugins, they are part of the main binary now
+    for i in $out/bin/*; do
+      if [[ $(basename $i) != atlas ]]; then
+        rm "$i"
+      fi
+    done
+  '';
 }
