@@ -40,7 +40,6 @@
               version = "1.52.1";
               sha256 = "sha256-fgxiAP8WbSqpLyod4aLK1pQpVtwEhF5ZYpUeheQNvVA=";
               lockFile = ./packages/dart-sass/1_52_1/pub2nix.lock;
-              dart = nix-dart.packages.dart;
           };
         };
         devShell = pkgs.devshell.mkShell {
