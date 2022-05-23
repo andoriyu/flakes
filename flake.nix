@@ -13,7 +13,7 @@
   outputs = { self, nixpkgs, flake-utils, devshell, nix-dart, fenix, ... }:
   let
     overlay = import ./overlay.nix;
-    systems = [ "x86_64-linux" "aarch64-linux"];
+    systems = [ "x86_64-linux" ];
   in {
         templates."rust-lite" = { path = ./templates/rust-lite; description = "A light version of rust environment for devlopment"; };
         templates."rust-wasm" = { path = ./templates/rust-wasm; description = "A fat version of rust environment with nodejs for full-stack devlopment"; };
@@ -40,13 +40,7 @@
               version = "1.52.1";
               sha256 = "sha256-fgxiAP8WbSqpLyod4aLK1pQpVtwEhF5ZYpUeheQNvVA=";
               lockFile = ./packages/dart-sass/1_52_1/pub2nix.lock;
-          };
-
-          dart-sass-1_49_9 = callPackage ./packages/dart-sass/from-source.nix {
-              buildDartPackage = nix-dart.builders.${system}.buildDartPackage;
-              version = "1.49.9";
-              sha256 = "sha256-FBcXlurgVDqcVPWPpXR2SGBc4SestGv9yovkFmiW5Gs=";
-              lockFile = ./packages/dart-sass/1_49_9/pub2nix.lock;
+              dart = nix-dart.packages.dart;
           };
         };
         devShell = pkgs.devshell.mkShell {
