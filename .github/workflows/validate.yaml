@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: nixbuild/nix-quick-install-action@v13
+      - uses: cachix/install-nix-action@v17
         with:
-          nix_version: 2.4
-          nix_conf: experimental-features = nix-command flakes
+          extra_nix_config: |
+            experimental-features = nix-command flakes
       - run: nix flake check --show-trace
   build:
     runs-on: ubuntu-latest
@@ -27,10 +27,10 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
-      - uses: nixbuild/nix-quick-install-action@v13
+      - uses: cachix/install-nix-action@v17
         with:
-          nix_version: 2.4
-          nix_conf: experimental-features = nix-command flakes
+          extra_nix_config: |
+            experimental-features = nix-command flakes
       - uses: cachix/cachix-action@v10
         with:
           name: andoriyu-flakes
