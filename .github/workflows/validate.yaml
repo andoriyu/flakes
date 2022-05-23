@@ -28,18 +28,15 @@ jobs:
         platform: ["x86_64-linux", "aarch64-linux"]
       fail-fast: false
     steps:
+      - name: Docker Setup QEMU
+        if: matrix.platform != 'x86_64-linux'
+        uses: docker/setup-qemu-action@v2.0.0
       - uses: actions/checkout@v2
       - uses: cachix/install-nix-action@v17
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
             system-features = aarch64-linux arm-linux
-      - name: aarch64-linux-emulation
-        if: matrix.platform == 'aarch64-linux'
-        run: |
-         DEBIAN_FRONTEND=noninteractive
-         sudo apt-get update -q -y && sudo apt-get install -q -y qemu-system-aarch64 qemu-efi binfmt-support qemu-user-static
-         sudo update-binfmts --display
       - uses: cachix/cachix-action@v10
         with:
           name: andoriyu-flakes
