@@ -1,4 +1,4 @@
-{lib, rustPlatform, fetchFromGitHub, ...}:
+{ lib, rustPlatform, fetchFromGitHub, ... }:
 rustPlatform.buildRustPackage rec {
   pname = "git-cliff";
   version = "0.7.0";

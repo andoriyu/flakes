@@ -3,33 +3,34 @@
 
 { pkgs ? import <nixpkgs> { }
 , sha256 ? "9f4102b45fbeaaa0f24d302f85b6139c1db1871a2a31c24ec2ff79e43da007e4"
-, version ? "1.24.4" }:
+, version ? "1.24.4"
+}:
 
 with pkgs;
 self.stdenv.mkDerivation rec {
-    name = "dart-sass-${version}";
-    inherit version;
-    
-    isExecutable = true;
+  name = "dart-sass-${version}";
+  inherit version;
 
-    src = fetchurl {
-        inherit sha256;
-        url = builtins.concatStringsSep "/" [
-            "https://github.com"
-            "sass/dart-sass/releases/download"
-            "${version}/dart-sass-${version}-linux-x64.tar.gz"
-        ];
-    };
+  isExecutable = true;
 
-    phases = "unpackPhase installPhase fixupPhase";
+  src = fetchurl {
+    inherit sha256;
+    url = builtins.concatStringsSep "/" [
+      "https://github.com"
+      "sass/dart-sass/releases/download"
+      "${version}/dart-sass-${version}-linux-x64.tar.gz"
+    ];
+  };
 
-    sourceRoot = "./dart-sass";
-    installPhase = ''
-        install -m755 -D sass $out/bin/sass
-    '';
-    fixupPhase = ''
-        patchelf \
-            --set-interpreter ${binutils.dynamicLinker} \
-            $out/bin/sass
-    '';
+  phases = "unpackPhase installPhase fixupPhase";
+
+  sourceRoot = "./dart-sass";
+  installPhase = ''
+    install -m755 -D sass $out/bin/sass
+  '';
+  fixupPhase = ''
+    patchelf \
+        --set-interpreter ${binutils.dynamicLinker} \
+        $out/bin/sass
+  '';
 }

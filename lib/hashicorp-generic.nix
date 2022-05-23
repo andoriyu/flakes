@@ -1,6 +1,6 @@
 /* This function creates a derivation for installing binaries directly
- * from releases.hashicorp.com.
- */
+  * from releases.hashicorp.com.
+*/
 { name
 , version
 , sha256
@@ -17,10 +17,10 @@
 let
   # Mapping of Nix systems to the GOOS/GOARCH pairs.
   systemMap = {
-    x86_64-linux  = "linux_amd64";
-    i686-linux    = "linux_386";
+    x86_64-linux = "linux_amd64";
+    i686-linux = "linux_386";
     x86_64-darwin = "darwin_amd64";
-    i686-darwin   = "darwin_386";
+    i686-darwin = "darwin_386";
     aarch64-linux = "linux_arm64";
   };
 
@@ -29,7 +29,8 @@ let
 
   # url for downloading composed of all the other stuff we built up.
   url = "https://releases.hashicorp.com/${name}/${version}/${name}_${version}_${goSystem}.zip";
-in stdenv.mkDerivation {
+in
+stdenv.mkDerivation {
   inherit pname version;
   src = fetchurl { inherit url sha256; };
 
