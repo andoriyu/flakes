@@ -44,10 +44,6 @@
           cargo-expand-nightly = callPackage ./packages/cargo-expand { toolchain = fenix.packages.${system}.minimal; };
           dart-sass-1_52_1 = callPackage ./packages/dart-sass {
             version = "1.52.1";
-            platformsSha256 = {
-              aarch64-linux = "sha256-ekK7BdPxD1BUG8dOusQeQcq8JHEWkYuT6glUo+VTGSs=";
-              x86_64-linux = "sha256-bok8Cehj50oot3uAnPY6mbLRRyRhGFjY8+VJEOGgadg=";
-            };
           };
         };
       }

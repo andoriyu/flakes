@@ -4,8 +4,8 @@
 { stdenv
 , fetchurl
 , binutils
-, platformsSha256
 , version
+, lib
 }:
 
 let
@@ -18,7 +18,17 @@ let
     aarch64-darwin = "darwin-arm64";
     armv7l-linux = "linux-armhf";
   }.${system};
-  sha256 = platformsSha256.${system};
+  meta =
+    let
+      versions = (builtins.fromJSON (builtins.readFile ./versions.json));
+      matches = x: x.version == version && x.platform == system;
+    in
+    lib.findFirst matches
+      (throw "Don't know this version yet")
+      versions;
+
+  sha256 = meta.sha256;
+  url = meta.url;
   archive_fmt = if stdenv.isDarwin then "zip" else "tar.gz";
 
 in
@@ -29,12 +39,7 @@ stdenv.mkDerivation {
   isExecutable = true;
 
   src = fetchurl {
-    inherit sha256;
-    url = builtins.concatStringsSep "/" [
-      "https://github.com"
-      "sass/dart-sass/releases/download"
-      "${version}/dart-sass-${version}-${plat}.${archive_fmt}"
-    ];
+    inherit sha256 url;
   };
   phases = "unpackPhase installPhase fixupPhase";
 
