@@ -24,6 +24,7 @@
         };
         rustNightlyToolchain = fenix.packages.${system}.toolchainOf {
           date = "2022-05-25";
+          sha256 = "sha256-zjx9Ogl5ZyJOWq/1byndSStGQiIzmw0NamzmVGmUZbY=";
         }; # Specific date to avoide recompilcation every day
       in
       with pkgs;
