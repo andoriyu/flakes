@@ -38,38 +38,16 @@
     },
     "flake-utils_2": {
       "locked": {
-        "lastModified": 1649676176,
-        "narHash": "sha256-OWKJratjt2RW151VUlJPRALb7OU2S5s+f0vLj4o1bHM=",
+        "lastModified": 1644229661,
+        "narHash": "sha256-1YdnJAsNy69bpcjuoKdOYQX0YxZBiCYZo4Twxerqv7k=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "a4b154ebbdc88c8498a5c7b01589addc9e9cb678",
+        "rev": "3cecb5b042f7f209c56ffd8371b2711a290ec797",
         "type": "github"
       },
       "original": {
         "owner": "numtide",
         "repo": "flake-utils",
-        "type": "github"
-      }
-    },
-    "nix-dart": {
-      "inputs": {
-        "flake-utils": "flake-utils_2",
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "pub2nix": "pub2nix"
-      },
-      "locked": {
-        "lastModified": 1652213615,
-        "narHash": "sha256-+eehm2JlhoKgY+Ea4DTxDMei/x4Fgz7S+ZPqWpZysuI=",
-        "owner": "tadfisher",
-        "repo": "nix-dart",
-        "rev": "6f686ddf984306d944e9b5adf9f35f3a0a0a70b7",
-        "type": "github"
-      },
-      "original": {
-        "owner": "tadfisher",
-        "repo": "nix-dart",
         "type": "github"
       }
     },
@@ -89,19 +67,36 @@
         "type": "github"
       }
     },
-    "pub2nix": {
-      "flake": false,
+    "nixpkgs_2": {
       "locked": {
-        "lastModified": 1594192744,
-        "narHash": "sha256-pDvcXSG1Mh2BpwkqAcNDJzcupV3pIAAtZJLfkiHMAz4=",
-        "owner": "paulyoung",
-        "repo": "pub2nix",
-        "rev": "0c7ecca590fcd1616db8c6468f799ffef36c85e9",
+        "lastModified": 1645655918,
+        "narHash": "sha256-ZfbEFRW7o237+A1P7eTKhXje435FCAoe0blj2n20Was=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "77a7a4197740213879b9a1d2e1788c6c8ade4274",
         "type": "github"
       },
       "original": {
-        "owner": "paulyoung",
-        "repo": "pub2nix",
+        "id": "nixpkgs",
+        "type": "indirect"
+      }
+    },
+    "pre-commit-hooks": {
+      "inputs": {
+        "flake-utils": "flake-utils_2",
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1652714503,
+        "narHash": "sha256-qQKVEfDe5FqvGgkZtg5Pc491foeiDPIOeycHMqnPDps=",
+        "owner": "cachix",
+        "repo": "pre-commit-hooks.nix",
+        "rev": "521a524771a8e93caddaa0ac1d67d03766a8b0b3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cachix",
+        "repo": "pre-commit-hooks.nix",
         "type": "github"
       }
     },
@@ -109,8 +104,8 @@
       "inputs": {
         "fenix": "fenix",
         "flake-utils": "flake-utils",
-        "nix-dart": "nix-dart",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "pre-commit-hooks": "pre-commit-hooks"
       }
     },
     "rust-analyzer-src": {
