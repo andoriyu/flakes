@@ -13,9 +13,6 @@
     let
       systems = [ "x86_64-linux" "aarch64-linux" ];
     in
-    {
-      templates."rust-lite" = { path = ./templates/rust-lite; description = "A light version of rust environment for devlopment"; };
-    } //
     flake-utils.lib.eachSystem systems (system:
       let
         overlays = [ ];
