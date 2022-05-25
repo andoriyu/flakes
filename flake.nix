@@ -25,7 +25,9 @@
         rustPlatformStable = pkgs.makeRustPlatform {
           inherit (fenix.packages.${system}.stable) cargo rustc;
         };
-
+        rustNightlyToolchain = fenix.packages.${system}.toolchainOf {
+          date = "2022-05-25";
+        }; # Specific date to avoide recompilcation every day
       in
       with pkgs;
       {
@@ -33,7 +35,7 @@
           atlas = callPackage ./packages/atlas/default.nix { };
           dart-sass = dart-sass-1_52_1;
           git-cliff = callPackage ./packages/git-cliff { rustPlatform = rustPlatformStable; };
-          cargo-expand-nightly = callPackage ./packages/cargo-expand { toolchain = fenix.packages.${system}.minimal; };
+          cargo-expand-nightly = callPackage ./packages/cargo-expand { toolchain = rustNightlyToolchain; };
           dart-sass-1_52_1 = callPackage ./packages/dart-sass {
             version = "1.52.1";
           };
