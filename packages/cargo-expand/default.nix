@@ -1,7 +1,7 @@
 { cargo-expand, runCommand, makeWrapper, toolchain, ... }:
 let
-  pname = cargo-expand.pname;
-  version = cargo-expand.version;
+  inherit (cargo-expand) pname;
+  inherit (cargo-expand) version;
 in
 runCommand "${pname}-${version}"
 {
