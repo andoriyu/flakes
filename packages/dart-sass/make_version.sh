@@ -30,6 +30,7 @@ for platform in "${!PLATFORMS[@]}"; do
 done
 
 jq -s '.' $TMP > $TMP.arr
-jq -s '.[0] + .[1]' $TMP.arr versions.json > versions.json
+jq -s '.[0] + .[1]' $TMP.arr versions.json > versions-new.json
+mv versions-new.json versions.json
 rm $TMP $TMP.arr
 cd -

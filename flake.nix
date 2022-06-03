@@ -31,11 +31,14 @@
       {
         packages = rec {
           atlas = callPackage ./packages/atlas/default.nix { };
-          dart-sass = dart-sass-1_52_1;
+          dart-sass = dart-sass-1_52_2;
           git-cliff = callPackage ./packages/git-cliff { rustPlatform = rustPlatformStable; };
           cargo-expand-nightly = callPackage ./packages/cargo-expand { toolchain = rustNightlyToolchain; };
           dart-sass-1_52_1 = callPackage ./packages/dart-sass {
             version = "1.52.1";
+          };
+          dart-sass-1_52_2 = callPackage ./packages/dart-sass {
+            version = "1.52.2";
           };
         };
         checks = {
