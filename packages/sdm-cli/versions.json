@@ -7,6 +7,18 @@
   },
   {
     "version": "33.57.0",
+    "platform": "x86_64-darwin",
+    "url": "https://downloads.strongdm.com/builds/sdm-cli/33.57.0/darwin/arm64/4ECD99F0961F3939EEFDB968AC63EABE3FD3CC24/sdmcli_33.57.0_darwin_arm64.zip",
+    "sha256": "1111111111111111111111111111111111111111111111111111"
+  },
+  {
+    "version": "33.57.0",
+    "platform": "aarch64-linux",
+    "url": "https://downloads.strongdm.com/builds/sdm-cli/33.57.0/darwin/arm64/4ECD99F0961F3939EEFDB968AC63EABE3FD3CC24/sdmcli_33.57.0_darwin_arm64.zip",
+    "sha256": "1111111111111111111111111111111111111111111111111111"
+  },
+  {
+    "version": "33.57.0",
     "platform": "x86_64-linux",
     "url": "https://downloads.strongdm.com/builds/sdm-cli/33.57.0/linux/amd64/0B59586A52D95BDB26494490AFEA82B5BBFDF03E/sdmcli_33.57.0_linux_amd64.zip",
     "sha256": "sha256-RG5Pj9O+E6RYbKL01tJI10LwSBvIxUFYGkC2xAtZ7NI="
