@@ -11,7 +11,7 @@ let
 in
 rec {
   atlas = pkgs.callPackage ./packages/atlas/default.nix { };
-  dart-sass = dart-sass-1_52_2;
+  dart-sass = dart-sass-1_53_0;
   git-cliff = pkgs.callPackage ./packages/git-cliff { rustPlatform = rustPlatformStable; };
   cargo-expand-nightly = pkgs.callPackage ./packages/cargo-expand { toolchain = rustNightlyToolchain; };
   dart-sass-1_52_1 = pkgs.callPackage ./packages/dart-sass {
@@ -19,6 +19,9 @@ rec {
   };
   dart-sass-1_52_2 = pkgs.callPackage ./packages/dart-sass {
     version = "1.52.2";
+  };
+  dart-sass-1_53_0 = pkgs.callPackage ./packages/dart-sass {
+    version = "1.53.0";
   };
   st-onedark = st_0_8_14.overrideAttrs (oldAttrs: rec {
     configFile = ./packages/st/config.def.h-onedark;
