@@ -26,8 +26,8 @@ rec {
   strongdm-cli = pkgs.callPackage ./packages/sdm-cli {
     version = "33.57.0";
   };
-  City = pkgs.lib.mkIf (pkgs.stdenv.isLinux) pkgs.callPackage ./packages/city-theme { };
-  st-onedark = pkgs.lib.mkIf (pkgs.stdenv.isLinux) st_0_8_14.overrideAttrs (oldAttrs: rec {
+  City = pkgs.callPackage ./packages/city-theme { };
+  st-onedark = st_0_8_14.overrideAttrs (oldAttrs: rec {
     configFile = ./packages/st/config.def.h-onedark;
     postPatch = "${oldAttrs.postPatch}\n cp ${configFile} config.def.h";
     buildInputs = oldAttrs.buildInputs ++ [ pkgs.harfbuzz ];
