@@ -31,5 +31,5 @@ rec {
   strongdm-cli = pkgs.callPackage ./packages/sdm-cli {
     version = "33.57.0";
   };
-  City = pkgs.callPackage ./packages/city-theme { };
+  City = pkgs.lib.mkIf pkgs.stdenv.isLinux pkgs.callPackage ./packages/city-theme { };
 }
