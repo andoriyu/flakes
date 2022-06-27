@@ -11,7 +11,8 @@
   };
   outputs = { self, nixpkgs, flake-utils, fenix, pre-commit-hooks }:
     let
-      systems = [ "x86_64-linux" "aarch64-linux"  "aarch64-darwin" ];
+      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
+      linux_systems = [ "x86_64-linux" "aarch64-linux" ];
     in
     flake-utils.lib.eachSystem systems
       (system:
@@ -41,4 +42,3 @@
         }
       );
 }
-

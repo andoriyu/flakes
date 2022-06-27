@@ -27,6 +27,6 @@ stdenv.mkDerivation rec {
   meta = with lib; {
     description = "A stylish pastel theme for GNOME";
     homepage = "https://github.com/tsbarnes/City";
-    platforms = platforms.all;
+    platforms = platforms.linux;
   };
 }
