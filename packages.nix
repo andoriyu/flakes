@@ -7,7 +7,6 @@ let
     date = "2022-05-25";
     sha256 = "sha256-zjx9Ogl5ZyJOWq/1byndSStGQiIzmw0NamzmVGmUZbY=";
   }; # Specific date to avoid recompilcation every day
-  st_0_8_14 = pkgs.callPackage ./packages/st { };
 in
 rec {
   atlas = pkgs.callPackage ./packages/atlas/default.nix { };
@@ -23,13 +22,7 @@ rec {
   dart-sass-1_53_0 = pkgs.callPackage ./packages/dart-sass {
     version = "1.53.0";
   };
-  st-onedark = st_0_8_14.overrideAttrs (oldAttrs: rec {
-    configFile = ./packages/st/config.def.h-onedark;
-    postPatch = "${oldAttrs.postPatch}\n cp ${configFile} config.def.h";
-    buildInputs = oldAttrs.buildInputs ++ [ pkgs.harfbuzz ];
-  });
   strongdm-cli = pkgs.callPackage ./packages/sdm-cli {
     version = "33.57.0";
   };
-  City = pkgs.lib.mkIf pkgs.stdenv.isLinux pkgs.callPackage ./packages/city-theme { };
 }

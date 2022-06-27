@@ -11,7 +11,8 @@
   };
   outputs = { self, nixpkgs, flake-utils, fenix, pre-commit-hooks }:
     let
-      systems = [ "x86_64-linux" "aarch64-linux"  "aarch64-darwin" ];
+      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
+      linux_systems = [ "x86_64-linux" "aarch64-linux" ];
     in
     flake-utils.lib.eachSystem systems
       (system:
@@ -39,6 +40,19 @@
             inherit (self.checks.${system}.pre-commit-check) shellHook;
           };
         }
-      );
+      )
+    // flake-utils.lib.eachSystem linux_systems
+      (system:
+        let
+          overlays = [ ];
+          pkgs = import nixpkgs {
+            inherit system overlays;
+          };
+          packages = import ./linux_packages.nix { inherit system pkgs fenix; };
+        in
+        {
+          inherit packages;
+        });
+
 }
 
