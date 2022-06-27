@@ -40,19 +40,5 @@
             inherit (self.checks.${system}.pre-commit-check) shellHook;
           };
         }
-      )
-    // flake-utils.lib.eachSystem linux_systems
-      (system:
-        let
-          overlays = [ ];
-          pkgs = import nixpkgs {
-            inherit system overlays;
-          };
-          packages = import ./linux_packages.nix { inherit system pkgs fenix; };
-        in
-        {
-          inherit packages;
-        });
-
+      );
 }
-
