@@ -13,6 +13,7 @@ rec {
   atlas = pkgs.callPackage ./packages/atlas/default.nix { };
   dart-sass = dart-sass-1_53_0;
   git-cliff = pkgs.callPackage ./packages/git-cliff { rustPlatform = rustPlatformStable; };
+  doctave = pkgs.callPackage ./packages/doctave { rustPlatform = rustPlatformStable; };
   cargo-expand-nightly = pkgs.callPackage ./packages/cargo-expand { toolchain = rustNightlyToolchain; };
   dart-sass-1_52_1 = pkgs.callPackage ./packages/dart-sass {
     version = "1.52.1";
