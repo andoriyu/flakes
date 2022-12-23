@@ -1,12 +1,7 @@
 # Copyright 2020 Kyryl Vlasov
 # SPDX-License-Identifier: MIT
 
-{ stdenv
-, fetchurl
-, binutils
-, version
-, lib
-}:
+{ stdenv, fetchurl, binutils, version, lib }:
 
 let
   inherit (stdenv.hostPlatform) system;
@@ -16,9 +11,7 @@ let
       versions = builtins.fromJSON (builtins.readFile ./versions.json);
       matches = x: x.version == version && x.platform == system;
     in
-    lib.findFirst matches
-      (throw "Don't know this version yet")
-      versions;
+    lib.findFirst matches (throw "Don't know this version yet") versions;
 in
 stdenv.mkDerivation {
   name = "dart-sass-${version}";
@@ -26,9 +19,7 @@ stdenv.mkDerivation {
 
   isExecutable = true;
 
-  src = fetchurl {
-    inherit (meta) sha256 url;
-  };
+  src = fetchurl { inherit (meta) sha256 url; };
   phases = "unpackPhase installPhase fixupPhase";
 
   sourceRoot = "./dart-sass";

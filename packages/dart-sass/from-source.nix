@@ -6,7 +6,6 @@
 , lockFile
 }:
 
-
 buildDartPackage rec {
   pname = "dart-sass";
   inherit version;

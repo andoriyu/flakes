@@ -51,11 +51,11 @@ rustPlatform.buildRustPackage {
   '';
 
   meta = with lib; {
-    description = "An experimental modular compiler frontend for the Rust language";
+    description =
+      "An experimental modular compiler frontend for the Rust language";
     homepage = "https://github.com/rust-analyzer/rust-analyzer";
     license = with licenses; [ mit asl20 ];
     maintainers = with maintainers; [ oxalica ];
   };
 }
-
 
