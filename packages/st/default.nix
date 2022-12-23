@@ -24,8 +24,8 @@ stdenv.mkDerivation rec {
 
   inherit patches;
 
-  configFile = lib.optionalString (conf != null)
-    (writeText "config.def.h" conf);
+  configFile =
+    lib.optionalString (conf != null) (writeText "config.def.h" conf);
 
   postPatch = lib.optionalString (conf != null) "cp ${configFile} config.def.h"
     + lib.optionalString stdenv.isDarwin ''
@@ -34,20 +34,10 @@ stdenv.mkDerivation rec {
 
   strictDeps = true;
 
-  makeFlags = [
-    "PKG_CONFIG=${stdenv.cc.targetPrefix}pkg-config"
-  ];
+  makeFlags = [ "PKG_CONFIG=${stdenv.cc.targetPrefix}pkg-config" ];
 
-  nativeBuildInputs = [
-    pkg-config
-    ncurses
-    fontconfig
-    freetype
-  ];
-  buildInputs = [
-    libX11
-    libXft
-  ] ++ extraLibs;
+  nativeBuildInputs = [ pkg-config ncurses fontconfig freetype ];
+  buildInputs = [ libX11 libXft ] ++ extraLibs;
 
   installPhase = ''
     runHook preInstall

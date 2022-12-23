@@ -12,7 +12,8 @@ buildGoModule rec {
   doCheck = false;
   subPackages = [ "cmd/atlas" ];
   meta = with lib; {
-    description = "Atlas is a CLI designed to help companies better work with their data.";
+    description =
+      "Atlas is a CLI designed to help companies better work with their data.";
     homepage = "https://github.com/ariga/atlas";
     license = licenses.asl20;
     maintainers = [ "andoriyu@gmail.com" ];
