@@ -11,7 +11,7 @@ let
 in
 rec {
   atlas = pkgs.callPackage ./packages/atlas/default.nix { };
-  dart-sass = dart-sass-1_54_4;
+  dart-sass = dart-sass-1_57_1;
   git-cliff = pkgs.callPackage ./packages/git-cliff { rustPlatform = rustPlatformStable; };
   doctave = pkgs.callPackage ./packages/doctave { rustPlatform = rustPlatformStable; };
   cargo-expand-nightly = pkgs.callPackage ./packages/cargo-expand { toolchain = rustNightlyToolchain; };
@@ -27,6 +27,10 @@ rec {
   dart-sass-1_54_4 = pkgs.callPackage ./packages/dart-sass {
     version = "1.54.4";
   };
+  dart-sass-1_57_1 = pkgs.callPackage ./packages/dart-sass {
+    version = "1.57.1";
+  };
+
   strongdm-cli = pkgs.callPackage ./packages/sdm-cli {
     version = "33.57.0";
   };
