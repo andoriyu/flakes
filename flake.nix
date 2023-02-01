@@ -26,7 +26,6 @@
               nixpkgs-fmt.enable = true;
               shellcheck.enable = true;
               statix.enable = true;
-              nix-linter.enable = true;
             };
           };
         };
