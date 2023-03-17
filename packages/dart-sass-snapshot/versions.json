@@ -1,5 +1,29 @@
 [
   {
+    "version": "1.59.3",
+    "platform": "aarch64-darwin",
+    "url": "https://github.com/sass/dart-sass/releases/download/1.59.3/dart-sass-1.59.3-macos-arm64.tar.gz",
+    "sha256": "sha256-o54mTrwAcXz9lHaRA8boInNWcKqtTx9WtXy5RwmHdKM="
+  },
+  {
+    "version": "1.59.3",
+    "platform": "aarch64-linux",
+    "url": "https://github.com/sass/dart-sass/releases/download/1.59.3/dart-sass-1.59.3-linux-arm64.tar.gz",
+    "sha256": "sha256-tk6syga6pr9yrdM0CsYFGf9UyKHyEIURGm/uwXXn+zo="
+  },
+  {
+    "version": "1.59.3",
+    "platform": "x86_64-darwin",
+    "url": "https://github.com/sass/dart-sass/releases/download/1.59.3/dart-sass-1.59.3-macos-x64.tar.gz",
+    "sha256": "sha256-4wO5Y1X9Qgt1ovCCbLWJ4OBA7VGy6+pzWAHLvldnq14="
+  },
+  {
+    "version": "1.59.3",
+    "platform": "x86_64-linux",
+    "url": "https://github.com/sass/dart-sass/releases/download/1.59.3/dart-sass-1.59.3-linux-x64.tar.gz",
+    "sha256": "sha256-5Ch8qEMZqaCeMR8na4EdtWMEjZPspubsKQrrRCyi/as="
+  },
+  {
     "version": "1.58.0",
     "platform": "aarch64-darwin",
     "url": "https://github.com/sass/dart-sass/releases/download/1.58.0/dart-sass-1.58.0-macos-arm64.tar.gz",
