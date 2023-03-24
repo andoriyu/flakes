@@ -4,14 +4,14 @@ let
     inherit (fenix.packages.${system}.stable) cargo rustc;
   };
   rustNightlyToolchain = fenix.packages.${system}.toolchainOf {
-    date = "2022-08-11";
-    sha256 = "sha256-wVnIzrnpYGqiCBtc3k55tw4VW8YLA3WZY0mSac+2yl0=";
+    date = "2023-03-23";
+    sha256 = "sha256-PZ0RpKaEB1o2kkSUSMmPU4zRFPqC2VdPGUV+kQiQLFA=";
   }; # Specific date to avoid recompilcation every day
   st_0_8_14 = pkgs.callPackage ./packages/st { };
 in
 rec {
   atlas = pkgs.callPackage ./packages/atlas/default.nix { };
-  dart-sass = dart-sass-1_59_3;
+  dart-sass = dart-sass-1_60_0;
   git-cliff = pkgs.callPackage ./packages/git-cliff {
     rustPlatform = rustPlatformStable;
   };
@@ -34,6 +34,8 @@ rec {
     pkgs.callPackage ./packages/dart-sass-snapshot { version = "1.58.0"; };
   dart-sass-1_59_3 =
     pkgs.callPackage ./packages/dart-sass-snapshot { version = "1.59.3"; };
+  dart-sass-1_60_0 =
+    pkgs.callPackage ./packages/dart-sass-snapshot { version = "1.60.0"; };
 
   strongdm-cli = pkgs.callPackage ./packages/sdm-cli { version = "33.57.0"; };
 } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
