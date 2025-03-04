@@ -13,10 +13,10 @@ rustPlatform.buildRustPackage rec {
     owner = "cenotelie";
     repo = pname;
     rev = "v${version}";
-    sha256 = "${lib.fakeSha256}";
+    sha256 = "sha256-NBjAH5O4CCY8tTIuvbXqbDJ+ggs77I9Yq9xocD01RmA=";
   };
 
-  cargoSha256 = "${lib.fakeSha256}";
+  cargoSha256 = "sha256-4ZueSJ0SZ9SgZQ1IrwA7U6nhPZvnqtmoaRzS+cPa7zc=";
   meta = with lib; {
     description = "Lightweight private cargo registry with batteries included, built for organisations";
     homepage = "https://github.com/cenotelie/cratery";
