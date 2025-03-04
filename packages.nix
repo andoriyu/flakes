@@ -1,4 +1,8 @@
-{ pkgs, fenix, system, ... }:
+{ pkgs
+, fenix
+, system
+, ...
+}:
 let
   rustPlatformStable = pkgs.makeRustPlatform {
     inherit (fenix.packages.${system}.stable) cargo rustc;
@@ -38,7 +42,8 @@ rec {
     pkgs.callPackage ./packages/dart-sass-snapshot { version = "1.60.0"; };
 
   strongdm-cli = pkgs.callPackage ./packages/sdm-cli { version = "33.57.0"; };
-} // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+}
+  // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
   City = pkgs.callPackage ./packages/city-theme { };
   st-onedark = st_0_8_14.overrideAttrs (oldAttrs: rec {
     configFile = ./packages/st/config.def.h-onedark;
@@ -47,4 +52,5 @@ rec {
        cp ${configFile} config.def.h'';
     buildInputs = oldAttrs.buildInputs ++ [ pkgs.harfbuzz ];
   });
+  cratery = pkgs.callPackage ./packages/cratery { };
 }
