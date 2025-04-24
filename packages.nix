@@ -20,11 +20,11 @@ rec {
     rustPlatform = rustPlatformStable;
   };
   encodec = pkgs.callPackage ./packages/encodec {
-    inherit (pkgs.python311Packagesf) buildPythonPackage;
+    inherit (pkgs.python311Packages) buildPythonPackage;
   };
   bark = pkgs.callPackage ./packages/bark {
     inherit encodec; # makes the local copy visible
-    inherit (pkgs.python311Packagesf) buildPythonPackage;
+    inherit (pkgs.python311Packages) buildPythonPackage;
   };
   doctave =
     pkgs.callPackage ./packages/doctave { rustPlatform = rustPlatformStable; };
