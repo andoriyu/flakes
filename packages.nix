@@ -1,4 +1,8 @@
-{ pkgs, fenix, system, ... }:
+{ pkgs
+, fenix
+, system
+, ...
+}:
 let
   rustPlatformStable = pkgs.makeRustPlatform {
     inherit (fenix.packages.${system}.stable) cargo rustc;
@@ -14,6 +18,13 @@ rec {
   dart-sass = dart-sass-1_60_0;
   git-cliff = pkgs.callPackage ./packages/git-cliff {
     rustPlatform = rustPlatformStable;
+  };
+  encodec = pkgs.callPackage ./packages/encodec {
+    inherit (pkgs.python311Packagesf) buildPythonPackage;
+  };
+  bark = pkgs.callPackage ./packages/bark {
+    inherit encodec; # makes the local copy visible
+    inherit (pkgs.python311Packagesf) buildPythonPackage;
   };
   doctave =
     pkgs.callPackage ./packages/doctave { rustPlatform = rustPlatformStable; };
@@ -38,7 +49,8 @@ rec {
     pkgs.callPackage ./packages/dart-sass-snapshot { version = "1.60.0"; };
 
   strongdm-cli = pkgs.callPackage ./packages/sdm-cli { version = "33.57.0"; };
-} // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+}
+  // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
   City = pkgs.callPackage ./packages/city-theme { };
   st-onedark = st_0_8_14.overrideAttrs (oldAttrs: rec {
     configFile = ./packages/st/config.def.h-onedark;
