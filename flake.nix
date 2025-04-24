@@ -56,16 +56,20 @@
       packages = import ./packages.nix { inherit system pkgs fenix; };
 
       # -------------------------- Bark CLI wrapper -----------------------
-      barkCli = pkgs.writeShellApplication {
-        name = "bark";
-        runtimeInputs = [
-          pkgs.python311
-          packages.bark # makes Bark + deps available on PYTHONPATH
-        ];
-        text = ''
-          exec python -m bark "$@"
-        '';
-      };
+      barkCli =
+        let
+          py = pkgs.python311.withPackages (ps: [ packages.bark ]);
+        in
+        pkgs.writeShellApplication {
+          name = "bark";
+
+          # A single runtime input: the enriched interpreter
+          runtimeInputs = [ py ];
+
+          text = ''
+            exec python -m bark "$@"
+          '';
+        };
     in
     {
       inherit packages;
