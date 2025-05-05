@@ -59,4 +59,5 @@ rec {
        cp ${configFile} config.def.h'';
     buildInputs = oldAttrs.buildInputs ++ [ pkgs.harfbuzz ];
   });
+  cratery = pkgs.callPackage ./packages/cratery { };
 }
