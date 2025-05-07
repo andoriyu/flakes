@@ -47,6 +47,7 @@ rec {
     pkgs.callPackage ./packages/dart-sass-snapshot { version = "1.59.3"; };
   dart-sass-1_60_0 =
     pkgs.callPackage ./packages/dart-sass-snapshot { version = "1.60.0"; };
+  mcp-language-server = pkgs.callPackage ./packages/mcp-language-server { };
 
   strongdm-cli = pkgs.callPackage ./packages/sdm-cli { version = "33.57.0"; };
 }
