@@ -34,6 +34,7 @@ in
     mcp-language-server = pkgs.callPackage ./packages/mcp-language-server {};
 
     strongdm-cli = pkgs.callPackage ./packages/sdm-cli {version = "33.57.0";};
+    github-mcp-server = pkgs.callPackage ./packages/github-mcp-server {};
   }
   // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
     City = pkgs.callPackage ./packages/city-theme {};
