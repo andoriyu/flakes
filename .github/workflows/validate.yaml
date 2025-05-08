@@ -20,13 +20,11 @@ jobs:
     strategy:
       matrix:
         pkg:
-          - git-cliff
-          - dart-sass
-          - atlas
           - cargo-expand-nightly
-          - st-onedark
-          - doctave
-          - dart-sass-1_57_1
+          - dart-sass
+          - mcp-language-server
+          - bark
+          - City
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
