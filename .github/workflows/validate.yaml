@@ -20,7 +20,6 @@ jobs:
     strategy:
       matrix:
         pkg:
-          - cargo-expand-nightly
           - dart-sass
           - mcp-language-server
           - bark

@@ -4,13 +4,6 @@
   system,
   ...
 }: let
-  rustPlatformStable = pkgs.makeRustPlatform {
-    inherit (fenix.packages.${system}.stable) cargo rustc;
-  };
-  rustNightlyToolchain = fenix.packages.${system}.toolchainOf {
-    date = "2023-03-23";
-    sha256 = "sha256-PZ0RpKaEB1o2kkSUSMmPU4zRFPqC2VdPGUV+kQiQLFA=";
-  }; # Specific date to avoid recompilcation every day
   st_0_8_14 = pkgs.callPackage ./packages/st {};
 in
   rec {
