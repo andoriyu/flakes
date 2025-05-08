@@ -16,7 +16,7 @@ buildGoModule rec {
   };
 
   vendorHash = "sha256-3NEG9o5AF2ZEFWkA9Gub8vn6DNptN6DwVcn/oR8ujW0=";
-  subPackages = [ "." ];
+  subPackages = ["."];
 
   # strip debug info
   ldflags = ["-s" "-w"];
