@@ -3,36 +3,32 @@ name: Validate Flake & Packages
 on:
   pull_request:
     # Sequence of patterns matched against refs/heads
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:  # allows manual triggering
   schedule:
-    - cron: '0 0 * * 0'  # runs weekly on Sunday at 00:00
-
+    - cron: 0 0 * * 0  # runs weekly on Sunday at 00:00
 jobs:
   validate-flake:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v17
-        with:
-          extra_nix_config: |
-            experimental-features = nix-command flakes
+      - uses: cachix/install-nix-action@v31
       - run: nix flake show
       - run: nix flake check
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        pkg: ["git-cliff", "dart-sass", "atlas", "cargo-expand-nightly", "st-onedark", "doctave", "dart-sass-1_57_1"]
+        pkg:
+          - dart-sass
+          - mcp-language-server
+          - bark
+          - City
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v17
-        with:
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-      - uses: cachix/cachix-action@v10
+      - uses: cachix/install-nix-action@v31
+      - uses: cachix/cachix-action@v16
         with:
           name: andoriyu-flakes
           authToken: ${{ secrets.CACHIX_TOKEN }}

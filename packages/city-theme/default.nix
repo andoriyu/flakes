@@ -1,5 +1,9 @@
-{ lib, stdenv, fetchFromGitHub, gtk-engine-murrine }:
-
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  gtk-engine-murrine,
+}:
 stdenv.mkDerivation rec {
   pname = "City";
   version = "0.0.20201019";
@@ -13,7 +17,7 @@ stdenv.mkDerivation rec {
     })
   ];
 
-  propagatedUserEnvPkgs = [ gtk-engine-murrine ];
+  propagatedUserEnvPkgs = [gtk-engine-murrine];
 
   installPhase = ''
     ls -lsa

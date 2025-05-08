@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-cd $(dirname "$0")
+cd "$(dirname "$0")"
 
 declare -A PLATFORMS=(
     [macos-x64]=x86_64-darwin
@@ -22,10 +22,10 @@ for platform in "${!PLATFORMS[@]}"; do
   url="${BASE}/${VERSION}/dart-sass-${VERSION}-${platform}.tar.gz"
   sha256=$(nix store prefetch-file --json "${url}" | jq -r '.hash')
   nixPlatform=${PLATFORMS[$platform]}
-  jq --arg version ${VERSION} \
-    --arg platform $nixPlatform \
+  jq --arg version "${VERSION}" \
+    --arg platform "$nixPlatform" \
     --arg url "$url" \
-    --arg sha256 $sha256 \
+    --arg sha256 "$sha256" \
     -n '$ARGS.named' >> $TMP
 done
 
