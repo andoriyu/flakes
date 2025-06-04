@@ -9,11 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Install Nix
-        uses: cachix/install-nix-action@v16
+        uses: actions/checkout@v4.2.2
+      - name: Install Nix with FlakeHub Cache
+        uses: DeterminateSystems/determinate-nix-action@main
         with:
-          extra_nix_config: |
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+          flakehub: true
+      - name: Setup FlakeHub Cache
+        uses: DeterminateSystems/flakehub-cache-action@main
       - name: Update flake.lock
-        uses: DeterminateSystems/update-flake-lock@v3
+        uses: DeterminateSystems/update-flake-lock@v25
