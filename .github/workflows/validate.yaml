@@ -7,6 +7,11 @@ on:
   workflow_dispatch:  # allows manual triggering
   schedule:
     - cron: 0 0 * * 0  # runs weekly on Sunday at 00:00
+
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   validate-flake:
     runs-on: ubuntu-latest
