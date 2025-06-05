@@ -31,7 +31,6 @@ in
     # Utility scripts
     wait-for-pr-checks = pkgs.callPackage ./packages/wait-for-pr-checks {};
 
-    strongdm-cli = pkgs.callPackage ./packages/sdm-cli {version = "33.57.0";};
     github-mcp-server = pkgs.callPackage ./packages/github-mcp-server {};
   }
   // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
