@@ -30,7 +30,7 @@ in
       install -m755 -D src/dart $out/bin/src/dart
       install -m755 -D src/sass.snapshot $out/bin/src/sass.snapshot
     '';
-    fixupPhase = ''
+    fixupPhase = lib.optionalString (!stdenv.isDarwin) ''
       patchelf \
           --set-interpreter ${binutils.dynamicLinker} \
           $out/bin/src/dart
