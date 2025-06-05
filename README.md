@@ -31,6 +31,9 @@ NOTE: Not every package is cached.
 
  - git-cliff
  - cargo-expand-nightly (a wrapper around `cargo-expand`)
+ - mcp-neo4j-cypher (Neo4j MCP server for natural language to Cypher queries)
+ - mcp-neo4j-memory (Neo4j MCP server for knowledge graph memory)
+ - mcp-neo4j-cloud-aura-api (Neo4j MCP server for Aura cloud service management)
 
 ## Templates
 

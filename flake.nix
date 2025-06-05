@@ -40,12 +40,15 @@
       else {};
 
     # ---------------------------------------------------------------------
-    # Overlay: add our custom packages (cargo-expand-nightly, dart-sass)
+    # Overlay: add our custom packages
     customPackagesOverlay = final: prev: {
       inherit
         (self.packages.${prev.system})
         cargo-expand-nightly
         dart-sass
+        mcp-neo4j-cypher
+        mcp-neo4j-memory
+        mcp-neo4j-cloud-aura-api
         ;
     };
 
