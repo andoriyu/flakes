@@ -10,6 +10,7 @@
     "mcp-neo4j-cypher" = {
       version = "0.2.1";
       tag = "mcp-neo4j-cypher-v0.2.1";
+      sha256 = "sha256-u7DB+j8SY0rNZzug9R6rIkWd9DNVOR/vUIfAna8MrOs=";
       dependencies = [
         "mcp[cli]>=1.6.0"
         "neo4j>=5.26.0"
@@ -19,6 +20,7 @@
     "mcp-neo4j-memory" = {
       version = "0.1.3";
       tag = "mcp-neo4j-memory-v0.1.3";
+      sha256 = "sha256-homihdVoOj7dO6bn5DffozK47X8pHwzLPvnSnfbF2so=";
       dependencies = [
         "mcp>=0.10.0"
         "neo4j>=5.26.0"
@@ -27,6 +29,7 @@
     "mcp-neo4j-cloud-aura-api" = {
       version = "0.2.2";
       tag = "mcp-neo4j-aura-manager-v0.2.2";
+      sha256 = "sha256-cnek3m2oGY5H5e3WVCaBbFbOT1JVvZhW6RH1y8ui8W0=";
       dependencies = [
         "mcp>=1.6.0"
         "requests>=2.31.0"
@@ -47,7 +50,7 @@
         owner = "neo4j-contrib";
         repo = "mcp-neo4j";
         rev = serverInfo.${name}.tag;
-        sha256 = "sha256-homihdVoOj7dO6bn5DffozK47X8pHwzLPvnSnfbF2so=";
+        inherit (serverInfo.${name}) sha256;
       };
 
       sourceRoot = "source/servers/${name}";
