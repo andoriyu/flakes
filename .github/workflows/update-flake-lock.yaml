@@ -4,16 +4,19 @@ on:
   schedule:
     - cron: '0 17 * * 0,3,5' # At 17:00 (10 AM PST) on Sunday, Wednesday, and Friday.
 
+permissions:
+  id-token: write
+  contents: write
+
 jobs:
   lockfile:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Install Nix
-        uses: cachix/install-nix-action@v16
-        with:
-          extra_nix_config: |
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+        uses: actions/checkout@v4.2.2
+      - name: Install Nix with FlakeHub Cache
+        uses: DeterminateSystems/determinate-nix-action@main
+      - name: Setup FlakeHub Cache
+        uses: DeterminateSystems/flakehub-cache-action@main
       - name: Update flake.lock
-        uses: DeterminateSystems/update-flake-lock@v3
+        uses: DeterminateSystems/update-flake-lock@v25
