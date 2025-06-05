@@ -5,6 +5,7 @@
   ...
 }: let
   st_0_8_14 = pkgs.callPackage ./packages/st {};
+  neo4j-mcp-packages = pkgs.callPackage ./packages/neo4j-mcp {};
 in
   rec {
     dart-sass = dart-sass-1_60_0;
@@ -32,6 +33,14 @@ in
     dart-sass-1_60_0 =
       pkgs.callPackage ./packages/dart-sass-snapshot {version = "1.60.0";};
     mcp-language-server = pkgs.callPackage ./packages/mcp-language-server {};
+
+    # Neo4j MCP servers
+    inherit
+      (neo4j-mcp-packages)
+      mcp-neo4j-cypher
+      mcp-neo4j-memory
+      mcp-neo4j-cloud-aura-api
+      ;
 
     strongdm-cli = pkgs.callPackage ./packages/sdm-cli {version = "33.57.0";};
     github-mcp-server = pkgs.callPackage ./packages/github-mcp-server {};
