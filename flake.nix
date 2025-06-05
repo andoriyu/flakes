@@ -49,6 +49,7 @@
         mcp-neo4j-cypher
         mcp-neo4j-memory
         mcp-neo4j-cloud-aura-api
+        wait-for-pr-checks
         ;
     };
 
@@ -70,7 +71,7 @@
         pkgs = import nixpkgs {
           inherit system;
           overlays = [fullOverlay];
-          # Needed for EnCodec’s CC-BY-NC licence
+          # Needed for EnCodec's CC-BY-NC licence
           config.allowUnfree = true;
         };
 
@@ -110,7 +111,10 @@
         };
 
         # --------------------------- apps -------------------------------
-        apps.bark = flake-utils.lib.mkApp {drv = barkCli;};
+        apps = {
+          bark = flake-utils.lib.mkApp {drv = barkCli;};
+          wait-for-pr-checks = flake-utils.lib.mkApp {drv = packages.wait-for-pr-checks;};
+        };
       }
     ));
 }

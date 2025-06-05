@@ -1,0 +1,243 @@
+#!/bin/sh
+# 
+# wait-for-pr-checks - Monitor GitHub PR checks with exponential backoff
+#
+# Usage: wait-for-checks [options]
+#
+# Options:
+#   -t, --timeout SECONDS    Maximum total wait time (default: 600 seconds)
+#   -m, --max-wait SECONDS   Maximum single wait interval (default: 30 seconds)
+#   -i, --initial SECONDS    Initial wait time (default: 5 seconds)
+#   -f, --no-fail-fast       Don't exit immediately when a check fails
+#   -h, --help               Show this help message
+#
+# Dependencies: gh (GitHub CLI), jq
+
+set -e  # Exit immediately if a command exits with non-zero status
+
+# Default configuration
+TIMEOUT=600      # 10 minutes total timeout
+MAX_INTERVAL=30  # Maximum wait between checks
+INITIAL_WAIT=5   # Initial wait time
+FAIL_FAST=true   # Exit as soon as any check fails
+
+# ANSI color codes
+GREEN="\033[0;32m"
+RED="\033[0;31m"
+YELLOW="\033[0;33m"
+CYAN="\033[0;36m"
+BOLD="\033[1m"
+RESET="\033[0m"
+
+# Function to display usage information
+usage() {
+    cat <<EOF
+Usage: wait-for-checks [options]
+
+Monitor GitHub PR checks with exponential backoff until completion or timeout.
+
+Options:
+  -t, --timeout SECONDS    Maximum total wait time (default: 600 seconds)
+  -m, --max-wait SECONDS   Maximum single wait interval (default: 30 seconds)
+  -i, --initial SECONDS    Initial wait time (default: 5 seconds)
+  -f, --no-fail-fast       Don't exit immediately when a check fails
+  -h, --help               Show this help message
+EOF
+    exit "${1:-0}"
+}
+
+# Function to check dependencies
+check_dependencies() {
+    for cmd in gh jq; do
+        if ! command -v "$cmd" >/dev/null 2>&1; then
+            echo "${RED}Error: Required command '$cmd' not found${RESET}" >&2
+            echo "Please install the missing dependencies and try again." >&2
+            exit 1
+        fi
+    done
+}
+
+# Function to validate numeric input
+validate_number() {
+    if ! echo "$1" | grep -q '^[0-9]\+$'; then
+        echo "${RED}Error: '$1' is not a valid number${RESET}" >&2
+        usage 1
+    fi
+}
+
+# Function to print a table row with proper formatting
+print_table_row() {
+    name="$1"
+    state="$2"
+    
+    # Truncate name if too long
+    if [ ${#name} -gt 30 ]; then
+        name="$(echo "$name" | cut -c 1-27)..."
+    fi
+    
+    # Pad name to 30 characters
+    printf "│ %-30s │ " "$name"
+    
+    # Color the state based on its value
+    case "$state" in
+        SUCCESS)
+            printf "${GREEN}%-12s${RESET}" "$state"
+            ;;
+        FAILURE)
+            printf "${RED}%-12s${RESET}" "$state"
+            ;;
+        PENDING)
+            printf "${YELLOW}%-12s${RESET}" "$state"
+            ;;
+        IN_PROGRESS)
+            printf "${YELLOW}%-12s${RESET}" "$state"
+            ;;
+        QUEUED)
+            printf "${YELLOW}%-12s${RESET}" "$state"
+            ;;
+        *)
+            printf "%-12s" "$state"
+            ;;
+    esac
+    
+    printf " │\n"
+}
+
+# Function to print table header
+print_table_header() {
+    echo "┌────────────────────────────────┬──────────────┐"
+    echo "│ ${BOLD}Check Name${RESET}                     │ ${BOLD}Status${RESET}       │"
+    echo "├────────────────────────────────┼──────────────┤"
+}
+
+# Function to print table footer
+print_table_footer() {
+    echo "└────────────────────────────────┴──────────────┘"
+}
+
+# Parse command line arguments
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -t|--timeout)
+            shift
+            TIMEOUT="$1"
+            validate_number "$TIMEOUT"
+            ;;
+        -m|--max-wait)
+            shift
+            MAX_INTERVAL="$1"
+            validate_number "$MAX_INTERVAL"
+            ;;
+        -i|--initial)
+            shift
+            INITIAL_WAIT="$1"
+            validate_number "$INITIAL_WAIT"
+            ;;
+        -f|--no-fail-fast)
+            FAIL_FAST=false
+            ;;
+        -h|--help)
+            usage
+            ;;
+        *)
+            echo "${RED}Error: Unknown option: $1${RESET}" >&2
+            usage 1
+            ;;
+    esac
+    shift
+done
+
+# Check for required dependencies
+check_dependencies
+
+# Main execution
+echo "${CYAN}Monitoring PR checks...${RESET}"
+echo "Press Ctrl+C to stop monitoring"
+if [ "$FAIL_FAST" = "true" ]; then
+    echo "Fail-fast mode: Will exit as soon as any check fails"
+else
+    echo "No fail-fast mode: Will wait for all checks to complete"
+fi
+echo "-----------------------------------"
+
+attempt=1
+wait_time="$INITIAL_WAIT"
+total_wait=0
+all_complete=false
+
+while [ "$all_complete" = false ] && [ "$total_wait" -lt "$TIMEOUT" ]; do
+    echo "${BOLD}Check attempt $attempt (Total wait: ${total_wait}s):${RESET}"
+    
+    # Get check status in JSON format for better parsing
+    checks=$(gh pr checks --json name,state,link 2>/dev/null)
+    if ! gh pr checks --json name,state,link >/dev/null 2>&1; then
+        echo "${RED}Error: Failed to get PR checks. Are you in a git repository with an open PR?${RESET}" >&2
+        exit 1
+    fi
+    
+    # Display current status in a neat table
+    print_table_header
+    echo "$checks" | jq -r '.[] | [.name, .state] | @tsv' | while IFS="$(printf '\t')" read -r name state; do
+        print_table_row "$name" "$state"
+    done
+    print_table_footer
+    
+    # Count pending checks (including QUEUED status)
+    pending_count=$(echo "$checks" | jq -r '[.[] | select(.state == "PENDING" or .state == "IN_PROGRESS" or .state == "QUEUED")] | length')
+    
+    # Count failed checks (excluding QUEUED status)
+    failed_count=$(echo "$checks" | jq -r '[.[] | select(.state != "SUCCESS" and .state != "PENDING" and .state != "IN_PROGRESS" and .state != "QUEUED")] | length')
+    
+    echo ""
+    echo "$pending_count checks still pending"
+    
+    # Check for failures if in fail-fast mode
+    if [ "$FAIL_FAST" = "true" ] && [ "$failed_count" -gt 0 ]; then
+        echo "${RED}❌ Some checks failed! (Exiting early due to fail-fast mode)${RESET}"
+        # Show detailed information for failed checks
+        printf "\n%sFailed checks details:%s\n" "$YELLOW" "$RESET"
+        echo "$checks" | jq -r '.[] | select(.state != "SUCCESS" and .state != "PENDING" and .state != "IN_PROGRESS" and .state != "QUEUED") | "- \(.name)\n  URL: \(.link)\n"'
+        exit 1
+    fi
+    
+    # If no pending checks, we're done
+    if [ "$pending_count" -eq 0 ]; then
+        all_complete=true
+        
+        if [ "$failed_count" -gt 0 ]; then
+            echo "${RED}❌ Some checks failed!${RESET}"
+            # Show detailed information for failed checks
+            printf "\n%sFailed checks details:%s\n" "$YELLOW" "$RESET"
+            echo "$checks" | jq -r '.[] | select(.state != "SUCCESS" and .state != "PENDING" and .state != "IN_PROGRESS" and .state != "QUEUED") | "- \(.name)\n  URL: \(.link)\n"'
+            exit 1
+        else
+            echo "${GREEN}✅ All checks passed successfully!${RESET}"
+            exit 0
+        fi
+    else
+        # Calculate next wait time with exponential backoff
+        wait_time=$((wait_time * 2))
+        
+        # Cap at MAX_INTERVAL
+        if [ "$wait_time" -gt "$MAX_INTERVAL" ]; then
+            wait_time="$MAX_INTERVAL"
+        fi
+        
+        echo "Waiting $wait_time seconds..."
+        sleep "$wait_time"
+        total_wait=$((total_wait + wait_time))
+        attempt=$((attempt + 1))
+        
+        # Check if we're approaching the timeout
+        remaining=$((TIMEOUT - total_wait))
+        if [ "$remaining" -lt "$wait_time" ]; then
+            echo "${YELLOW}⚠️ Approaching timeout limit. $remaining seconds remaining.${RESET}"
+        fi
+    fi
+done
+
+# Check if we timed out
+if [ "$total_wait" -ge "$TIMEOUT" ]; then
+    echo "${YELLOW}⏰ Timeout reached after $total_wait seconds. Some checks are still pending.${RESET}"
+    exit 2
+fi
