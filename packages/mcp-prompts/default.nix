@@ -13,7 +13,7 @@ buildNpmPackage rec {
     owner = "sparesparrow";
     repo = "mcp-prompts";
     rev = "v${version}";
-    sha256 = "sha256-CnF5dMfJaqDxUJgDK96PkAnAjIBtZ1R9YDUd+nc7GX8=";
+    sha256 = "sha256-mJdeVWHRURc4aAWoVfdlnTZcCO56s1XPsZcfqwC+J90=";
   };
 
   npmDepsHash = "sha256-/YAsE26OV2dBDqSVEdVIB7guNRCmHlQtFTcZwGprqd4=";
