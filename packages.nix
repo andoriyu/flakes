@@ -34,6 +34,7 @@ in
     wait-for-pr-checks = pkgs.callPackage ./packages/wait-for-pr-checks {};
 
     github-mcp-server = pkgs.callPackage ./packages/github-mcp-server {};
+    mcp-prompts = pkgs.callPackage ./packages/mcp-prompts {};
   }
   // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
     City = pkgs.callPackage ./packages/city-theme {};

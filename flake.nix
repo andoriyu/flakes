@@ -46,6 +46,7 @@
         (self.packages.${prev.system})
         cargo-expand-nightly
         dart-sass
+        mcp-prompts
         mcp-neo4j-cypher
         mcp-neo4j-memory
         mcp-neo4j-cloud-aura-api
