@@ -4,6 +4,7 @@
   makeWrapper,
   gh,
   jq,
+  bats,
 }:
 stdenv.mkDerivation {
   pname = "wait-for-pr-checks";
@@ -11,7 +12,8 @@ stdenv.mkDerivation {
 
   src = ../../scripts/bin/wait-for-pr-checks;
 
-  nativeBuildInputs = [makeWrapper bats];
+  nativeBuildInputs = [makeWrapper];
+  nativeCheckInputs = [bats];
   doCheck = true;
 
   dontUnpack = true;
