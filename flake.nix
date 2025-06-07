@@ -49,6 +49,7 @@
         mcp-neo4j-cypher
         mcp-neo4j-memory
         mcp-neo4j-cloud-aura-api
+        neo4j-apoc
         wait-for-pr-checks
         ;
     };
@@ -62,7 +63,10 @@
       a // b;
   in
     # Expose the composed overlay at the top level
-    {overlays.default = fullOverlay;}
+    {
+      overlays.default = fullOverlay;
+      nixosModules.neo4j-apoc = import ./modules/neo4j-apoc.nix;
+    }
     //
     # Create per-system outputs (packages, checks, devShell, apps)
     (flake-utils.lib.eachSystem systems (
@@ -91,6 +95,7 @@
           };
       in {
         inherit packages;
+        nixosTests.neo4j-apoc = pkgs.callPackage ./tests/neo4j-apoc.nix {};
 
         # ------------------------ pre-commit checks -----------------------
         checks.pre-commit-check = pre-commit-hooks.lib.${system}.run {
