@@ -20,7 +20,7 @@ EOF2
   chmod +x "$TMPDIR/gh"
 }
 
-script="$(realpath "$BATS_TEST_DIRNAME/../../../scripts/bin/wait-for-pr-checks")"
+script="${WAIT_FOR_PR_CHECKS_BIN:-$(realpath "$BATS_TEST_DIRNAME/../../../scripts/bin/wait-for-pr-checks")}"
 
 @test "displays help message with --help flag" {
   run "$script" --help

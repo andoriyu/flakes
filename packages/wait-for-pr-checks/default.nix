@@ -13,7 +13,7 @@ stdenv.mkDerivation {
   src = ../../scripts/bin/wait-for-pr-checks;
 
   nativeBuildInputs = [makeWrapper];
-  nativeCheckInputs = [bats];
+  nativeCheckInputs = [bats jq];
   doCheck = true;
 
   dontUnpack = true;
@@ -27,6 +27,7 @@ stdenv.mkDerivation {
   '';
 
   checkPhase = ''
+    export WAIT_FOR_PR_CHECKS_BIN=$src
     bats ${./tests/wait-for-pr-checks.bats}
   '';
 
