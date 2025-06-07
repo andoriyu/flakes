@@ -3,8 +3,9 @@
 setup() {
   TMPDIR="$BATS_TEST_DIRNAME/tmp"
   mkdir -p "$TMPDIR"
+  ln -s "$(command -v jq)" "$TMPDIR/jq"
   PATH="$TMPDIR:$PATH"
-  export PATH
+  export PATH JQ_BIN="$TMPDIR/jq"
 }
 
 teardown() {
