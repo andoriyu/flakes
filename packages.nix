@@ -6,6 +6,7 @@
 }: let
   st_0_8_14 = pkgs.callPackage ./packages/st {};
   neo4j-mcp-packages = pkgs.callPackage ./packages/neo4j-mcp {};
+  neo4j-apoc-pkg = pkgs.callPackage ./packages/neo4j-apoc {};
 in
   rec {
     dart-sass = dart-sass-1_89_1;
@@ -35,6 +36,7 @@ in
 
     github-mcp-server = pkgs.callPackage ./packages/github-mcp-server {};
     mcp-prompts = pkgs.callPackage ./packages/mcp-prompts {};
+    neo4j-apoc = neo4j-apoc-pkg;
   }
   // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
     City = pkgs.callPackage ./packages/city-theme {};
