@@ -12,8 +12,13 @@
 #   -h, --help               Show this help message
 #
 # Dependencies: gh (GitHub CLI), jq
+# Use GH_BIN and JQ_BIN env variables to override the commands
 
 set -e  # Exit immediately if a command exits with non-zero status
+
+# Allow overriding gh and jq for testing
+GH_BIN="${GH_BIN:-gh}"
+JQ_BIN="${JQ_BIN:-jq}"
 
 # Default configuration
 TIMEOUT=600      # 10 minutes total timeout
@@ -48,7 +53,7 @@ EOF
 
 # Function to check dependencies
 check_dependencies() {
-    for cmd in gh jq; do
+    for cmd in "$GH_BIN" "$JQ_BIN"; do
         if ! command -v "$cmd" >/dev/null 2>&1; then
             echo "${RED}Error: Required command '$cmd' not found${RESET}" >&2
             echo "Please install the missing dependencies and try again." >&2
@@ -169,24 +174,24 @@ while [ "$all_complete" = false ] && [ "$total_wait" -lt "$TIMEOUT" ]; do
     echo "${BOLD}Check attempt $attempt (Total wait: ${total_wait}s):${RESET}"
     
     # Get check status in JSON format for better parsing
-    checks=$(gh pr checks --json name,state,link 2>/dev/null)
-    if ! gh pr checks --json name,state,link >/dev/null 2>&1; then
+    checks=$("$GH_BIN" pr checks --json name,state,link 2>/dev/null)
+    if ! "$GH_BIN" pr checks --json name,state,link >/dev/null 2>&1; then
         echo "${RED}Error: Failed to get PR checks. Are you in a git repository with an open PR?${RESET}" >&2
         exit 1
     fi
     
     # Display current status in a neat table
     print_table_header
-    echo "$checks" | jq -r '.[] | [.name, .state] | @tsv' | while IFS="$(printf '\t')" read -r name state; do
+    echo "$checks" | "$JQ_BIN" -r '.[] | [.name, .state] | @tsv' | while IFS="$(printf '\t')" read -r name state; do
         print_table_row "$name" "$state"
     done
     print_table_footer
     
     # Count pending checks (including QUEUED status)
-    pending_count=$(echo "$checks" | jq -r '[.[] | select(.state == "PENDING" or .state == "IN_PROGRESS" or .state == "QUEUED")] | length')
+    pending_count=$(echo "$checks" | "$JQ_BIN" -r '[.[] | select(.state == "PENDING" or .state == "IN_PROGRESS" or .state == "QUEUED")] | length')
     
     # Count failed checks (excluding QUEUED status)
-    failed_count=$(echo "$checks" | jq -r '[.[] | select(.state != "SUCCESS" and .state != "PENDING" and .state != "IN_PROGRESS" and .state != "QUEUED")] | length')
+    failed_count=$(echo "$checks" | "$JQ_BIN" -r '[.[] | select(.state != "SUCCESS" and .state != "PENDING" and .state != "IN_PROGRESS" and .state != "QUEUED")] | length')
     
     echo ""
     echo "$pending_count checks still pending"
@@ -196,7 +201,7 @@ while [ "$all_complete" = false ] && [ "$total_wait" -lt "$TIMEOUT" ]; do
         echo "${RED}❌ Some checks failed! (Exiting early due to fail-fast mode)${RESET}"
         # Show detailed information for failed checks
         printf "\n%sFailed checks details:%s\n" "$YELLOW" "$RESET"
-        echo "$checks" | jq -r '.[] | select(.state != "SUCCESS" and .state != "PENDING" and .state != "IN_PROGRESS" and .state != "QUEUED") | "- \(.name)\n  URL: \(.link)\n"'
+        echo "$checks" | "$JQ_BIN" -r '.[] | select(.state != "SUCCESS" and .state != "PENDING" and .state != "IN_PROGRESS" and .state != "QUEUED") | "- \(.name)\n  URL: \(.link)\n"'
         exit 1
     fi
     
@@ -208,7 +213,7 @@ while [ "$all_complete" = false ] && [ "$total_wait" -lt "$TIMEOUT" ]; do
             echo "${RED}❌ Some checks failed!${RESET}"
             # Show detailed information for failed checks
             printf "\n%sFailed checks details:%s\n" "$YELLOW" "$RESET"
-            echo "$checks" | jq -r '.[] | select(.state != "SUCCESS" and .state != "PENDING" and .state != "IN_PROGRESS" and .state != "QUEUED") | "- \(.name)\n  URL: \(.link)\n"'
+            echo "$checks" | "$JQ_BIN" -r '.[] | select(.state != "SUCCESS" and .state != "PENDING" and .state != "IN_PROGRESS" and .state != "QUEUED") | "- \(.name)\n  URL: \(.link)\n"'
             exit 1
         else
             echo "${GREEN}✅ All checks passed successfully!${RESET}"

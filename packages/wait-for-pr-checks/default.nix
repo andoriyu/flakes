@@ -4,6 +4,7 @@
   makeWrapper,
   gh,
   jq,
+  bats,
 }:
 stdenv.mkDerivation {
   pname = "wait-for-pr-checks";
@@ -12,6 +13,8 @@ stdenv.mkDerivation {
   src = ../../scripts/bin/wait-for-pr-checks;
 
   nativeBuildInputs = [makeWrapper];
+  nativeCheckInputs = [bats jq];
+  doCheck = true;
 
   dontUnpack = true;
 
@@ -21,6 +24,11 @@ stdenv.mkDerivation {
     chmod +x $out/bin/wait-for-pr-checks
     wrapProgram $out/bin/wait-for-pr-checks \
       --prefix PATH : ${lib.makeBinPath [gh jq]}
+  '';
+
+  checkPhase = ''
+    export WAIT_FOR_PR_CHECKS_BIN=$src
+    bats ${./tests/wait-for-pr-checks.bats}
   '';
 
   meta = with lib; {
