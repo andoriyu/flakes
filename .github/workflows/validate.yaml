@@ -41,7 +41,14 @@ jobs:
 
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             git fetch origin ${{ github.event.pull_request.base.ref }}
-            CHANGED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}...HEAD)
+            BASE=$(git merge-base HEAD origin/${{ github.event.pull_request.base.ref }} || true)
+            if [ -n "$BASE" ]; then
+              CHANGED_FILES=$(git diff --name-only "$BASE"..HEAD)
+            else
+              echo "Warning: no merge base found, assuming all files changed"
+              CHANGED_FILES=$(git diff --name-only HEAD)
+            fi
+
             if echo "$CHANGED_FILES" | grep -q '^packages.nix'; then
               # packages.nix changed, build all packages
               PACKAGES=$(nix flake show --json | jq -r '.packages."x86_64-linux" | keys | tostring')
@@ -55,6 +62,7 @@ jobs:
             # Scheduled or manual run: build all packages
             PACKAGES=$(nix flake show --json | jq -r '.packages."x86_64-linux" | keys | tostring')
           fi
+
           echo "packages=$PACKAGES" >> "$GITHUB_OUTPUT"
           echo "Packages to build: $PACKAGES"
   
