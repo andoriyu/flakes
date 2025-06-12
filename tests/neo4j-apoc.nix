@@ -11,7 +11,8 @@ pkgs.nixosTest {
       https.enable = false;
       bolt = {
         enable = true;
-        listenAddress = "0.0.0.0:7687";
+        listenAddress = ":7687";
+        advertisedAddress: ":7687";
       };
       extraServerConfig = "dbms.security.auth_enabled=false";
     };
