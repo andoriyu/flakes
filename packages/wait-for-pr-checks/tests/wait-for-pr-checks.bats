@@ -26,7 +26,7 @@ script="${WAIT_FOR_PR_CHECKS_BIN:-$(realpath "$BATS_TEST_DIRNAME/../../../script
 @test "displays help message with --help flag" {
   run "$script" --help
   [ "$status" -eq 0 ]
-  [[ "$output" == *"Usage: wait-for-checks"* ]]
+  [[ "$output" == *"Usage: wait-for-pr-checks"* ]]
 }
 
 @test "exits with success when all checks pass" {
