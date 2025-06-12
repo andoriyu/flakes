@@ -20,7 +20,7 @@ jobs:
       - uses: DeterminateSystems/determinate-nix-action@main
       - uses: DeterminateSystems/flakehub-cache-action@main
       - run: nix flake show
-      - run: nix flake check
+      - run: nix build .#nixosTests.x86_64-linux.neo4j-apoc
   
   get-packages:
     runs-on: ubuntu-latest
@@ -50,3 +50,30 @@ jobs:
       - uses: DeterminateSystems/determinate-nix-action@main
       - uses: DeterminateSystems/flakehub-cache-action@main
       - run: nix build .#${{matrix.pkg}}
+
+  get-tests:
+    runs-on: ubuntu-latest
+    outputs:
+      tests: ${{ steps.get-tests.outputs.tests }}
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: DeterminateSystems/determinate-nix-action@main
+      - uses: DeterminateSystems/flakehub-cache-action@main
+      - id: get-tests
+        run: |
+          TESTS=$(nix flake show --json | jq -r '.nixosTests."x86_64-linux" | keys | tostring')
+          echo "tests=$TESTS" >> $GITHUB_OUTPUT
+          echo "Found tests: $TESTS"
+
+  build-tests:
+    needs: get-tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test: ${{ fromJson(needs.get-tests.outputs.tests) }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: DeterminateSystems/determinate-nix-action@main
+      - uses: DeterminateSystems/flakehub-cache-action@main
+      - run: nix build .#nixosTests.x86_64-linux.${{ matrix.test }}
