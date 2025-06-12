@@ -23,6 +23,7 @@ buildNpmPackage rec {
       integrity: "sha512-TdrF7fW9Rphjq4RjrW0Kp2AW0Ahwu9sRGTkS6bvDi0SCwZlEZYmcfDbEsTz8RVk0EHIS/Vd1bv3JhG+1xZuAyQ=="
     }' package-lock.json > package-lock.json.new
     mv package-lock.json.new package-lock.json
+    sed -i 's/\.allowExcessArguments()/\.allowExcessArguments?.()/g' cli/src/cli.ts
   '';
 
   npmDepsHash = "sha256-YV7+QdQwrQslj4Tw6lGEiLiYUe4NdfUotF2UxJGZe4I=";
