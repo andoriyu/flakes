@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
       - uses: DeterminateSystems/determinate-nix-action@main
       - uses: DeterminateSystems/flakehub-cache-action@main
       - run: nix flake show
@@ -28,15 +30,53 @@ jobs:
       packages: ${{ steps.get-packages.outputs.packages }}
     steps:
       - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
       - uses: DeterminateSystems/determinate-nix-action@main
       - uses: DeterminateSystems/flakehub-cache-action@main
       - id: get-packages
-        name: Get all packages from flake
+        name: Determine packages to build
         run: |
-          # Get all packages from the flake and format as JSON array
-          PACKAGES=$(nix flake show --json | jq -r '.packages."x86_64-linux" | keys | tostring')
-          echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
-          echo "Found packages: $PACKAGES"
+          set -euo pipefail
+          EVENT="$GITHUB_EVENT_NAME"
+          BASE_REF="${GITHUB_BASE_REF:-}"
+          HEAD_REF="$GITHUB_REF_NAME"
+      
+          echo "::notice::Event: $EVENT"
+          echo "::notice::BASE_REF: $BASE_REF"
+          echo "::notice::HEAD_REF: $HEAD_REF"
+      
+          if [ "$EVENT" = "pull_request" ]; then
+            echo "::group::Detecting changed files against base ref $BASE_REF"
+            git fetch --no-tags --depth=1 origin "$BASE_REF"
+            BASE="$(git merge-base HEAD "origin/$BASE_REF" 2>/dev/null || true)"
+            if [ -n "$BASE" ]; then
+              CHANGED_FILES="$(git diff --name-only "$BASE"...HEAD)"
+            else
+              echo "::warning::No merge-base found; assuming all files changed."
+              CHANGED_FILES="$(git diff --name-only HEAD)"
+            fi
+            echo "Changed files:\n$CHANGED_FILES"
+            echo "::endgroup::"
+      
+            if echo "$CHANGED_FILES" | grep -q '^packages\.nix$'; then
+              PACKAGES=$(nix flake show --json | jq -c '.packages."x86_64-linux" | keys')
+            else
+              PACKAGES=$(printf '%s\n' "$CHANGED_FILES" \
+                | grep '^packages/' \
+                | cut -d/ -f2 \
+                | sort -u \
+                | jq -R -s -c 'split("\n")[:-1]' \
+                || true)
+              [ -z "$PACKAGES" ] || [ "$PACKAGES" = "null" ] && PACKAGES="[]"
+            fi
+          else
+            PACKAGES=$(nix flake show --json | jq -c '.packages."x86_64-linux" | keys')
+          fi
+      
+          echo "PACKAGES JSON: $PACKAGES"
+          echo "packages=$PACKAGES" >>"$GITHUB_OUTPUT"
+          echo "Packages to build: $PACKAGES"
   
   build:
     needs: get-packages
@@ -47,6 +87,8 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
       - uses: DeterminateSystems/determinate-nix-action@main
       - uses: DeterminateSystems/flakehub-cache-action@main
       - run: nix build .#${{matrix.pkg}}
