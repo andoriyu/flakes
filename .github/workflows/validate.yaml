@@ -31,12 +31,28 @@ jobs:
       - uses: DeterminateSystems/determinate-nix-action@main
       - uses: DeterminateSystems/flakehub-cache-action@main
       - id: get-packages
-        name: Get all packages from flake
+        name: Determine packages to build
         run: |
-          # Get all packages from the flake and format as JSON array
-          PACKAGES=$(nix flake show --json | jq -r '.packages."x86_64-linux" | keys | tostring')
-          echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
-          echo "Found packages: $PACKAGES"
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin ${{ github.event.pull_request.base.ref }}
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}...HEAD)
+            if echo "$CHANGED_FILES" | grep -q '^packages.nix'; then
+              # packages.nix changed, build all packages
+              PACKAGES=$(nix flake show --json | jq -r '.packages."x86_64-linux" | keys | tostring')
+            else
+              PACKAGES=$(echo "$CHANGED_FILES" | grep '^packages/' | cut -d/ -f2 | sort -u | jq -R -s -c 'split("\n")[:-1]')
+              if [ -z "$PACKAGES" ] || [ "$PACKAGES" = "[]" ]; then
+                PACKAGES="[]"
+              fi
+            fi
+          else
+            # Scheduled or manual run: build all packages
+            PACKAGES=$(nix flake show --json | jq -r '.packages."x86_64-linux" | keys | tostring')
+          fi
+          echo "packages=$PACKAGES" >> "$GITHUB_OUTPUT"
+          echo "Packages to build: $PACKAGES"
   
   build:
     needs: get-packages
