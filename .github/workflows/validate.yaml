@@ -36,25 +36,30 @@ jobs:
       - uses: DeterminateSystems/flakehub-cache-action@main
       - id: get-packages
         name: Determine packages to build
-        run: |
-          #!/usr/bin/env sh
-          set -euo pipefail
+          run: |
+            #!/usr/bin/env sh
+            set -euo pipefail
 
-          EVENT="$GITHUB_EVENT_NAME"
-          BASE_REF="${GITHUB_BASE_REF:-}"
-          HEAD_REF="$GITHUB_REF_NAME"
+            EVENT="$GITHUB_EVENT_NAME"
+            BASE_REF="${GITHUB_BASE_REF:-}"
+            HEAD_REF="$GITHUB_REF_NAME"
 
-          if [ "$EVENT" = "pull_request" ]; then
-            echo "::group::Detecting changed files against base ref $BASE_REF"
-            git fetch --no-tags --depth=1 origin "$BASE_REF"
-            BASE="$(git merge-base HEAD "origin/$BASE_REF" 2>/dev/null || true)"
+            echo "::notice::Event: $EVENT"
+            echo "::notice::BASE_REF: $BASE_REF"
+            echo "::notice::HEAD_REF: $HEAD_REF"
+
+            if [ "$EVENT" = "pull_request" ]; then
+              echo "::group::Detecting changed files against base ref $BASE_REF"
+              git fetch --no-tags --depth=1 origin "$BASE_REF"
+              BASE="$(git merge-base HEAD "origin/$BASE_REF" 2>/dev/null || true)"
             if [ -n "$BASE" ]; then
               CHANGED_FILES="$(git diff --name-only "$BASE"...HEAD)"
-            else
-              echo "::warning::No merge-base found; assuming all files changed."
-              CHANGED_FILES="$(git diff --name-only HEAD)"
-            fi
-            echo "::endgroup::"
+              else
+                echo "::warning::No merge-base found; assuming all files changed."
+                CHANGED_FILES="$(git diff --name-only HEAD)"
+              fi
+              echo "Changed files:\n$CHANGED_FILES"
+              echo "::endgroup::"
 
             if echo "$CHANGED_FILES" | grep -q '^packages\.nix$'; then
               PACKAGES=$(nix flake show --json | jq -c '.packages."x86_64-linux" | keys')
@@ -66,6 +71,7 @@ jobs:
             PACKAGES=$(nix flake show --json | jq -c '.packages."x86_64-linux" | keys')
           fi
 
+          echo "PACKAGES JSON: $PACKAGES"
           echo "packages=$PACKAGES" >>"$GITHUB_OUTPUT"
           echo "Packages to build: $PACKAGES"
   
