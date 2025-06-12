@@ -62,7 +62,12 @@ jobs:
             if echo "$CHANGED_FILES" | grep -q '^packages\.nix$'; then
               PACKAGES=$(nix flake show --json | jq -c '.packages."x86_64-linux" | keys')
             else
-              PACKAGES=$(printf '%s\n' "$CHANGED_FILES" | grep '^packages/' | cut -d/ -f2 | sort -u | jq -R -s -c 'split("\n")[:-1]')
+              PACKAGES=$(printf '%s\n' "$CHANGED_FILES" \
+                | grep '^packages/' \
+                | cut -d/ -f2 \
+                | sort -u \
+                | jq -R -s -c 'split("\n")[:-1]' \
+                || true)
               [ -z "$PACKAGES" ] || [ "$PACKAGES" = "null" ] && PACKAGES="[]"
             fi
           else
