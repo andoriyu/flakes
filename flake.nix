@@ -95,7 +95,7 @@
           };
       in {
         inherit packages;
-        nixosTests.neo4j-apoc = pkgs.callPackage ./tests/neo4j-apoc.nix {};
+        checks.neo4j-apoc = pkgs.callPackage ./tests/neo4j-apoc.nix {};
 
         # ------------------------ pre-commit checks -----------------------
         checks.pre-commit-check = pre-commit-hooks.lib.${system}.run {
