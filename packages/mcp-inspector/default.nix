@@ -26,6 +26,14 @@ buildNpmPackage rec {
     sed -i 's/\.allowExcessArguments()/\.allowExcessArguments?.()/g' cli/src/cli.ts
   '';
 
+  makeWrapperArgs = [
+    "--prefix PATH : ${
+      lib.makeBinPath [
+        nodejs
+      ]
+    }"
+  ];
+
   npmDepsHash = "sha256-YV7+QdQwrQslj4Tw6lGEiLiYUe4NdfUotF2UxJGZe4I=";
 
   doCheck = false;
