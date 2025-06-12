@@ -8,7 +8,7 @@
   neo4j-mcp-packages = pkgs.callPackage ./packages/neo4j-mcp {};
 in
   rec {
-    dart-sass = dart-sass-1_89_1;
+    dart-sass = dart-sass-1_89_2;
     encodec = pkgs.callPackage ./packages/encodec {
       inherit (pkgs.python311Packages) buildPythonPackage;
     };
@@ -16,8 +16,8 @@ in
       inherit encodec; # makes the local copy visible
       inherit (pkgs.python311Packages) buildPythonPackage;
     };
-    dart-sass-1_89_1 =
-      pkgs.callPackage ./packages/dart-sass-snapshot {version = "1.89.1";};
+    dart-sass-1_89_2 =
+      pkgs.callPackage ./packages/dart-sass-snapshot {version = "1.89.2";};
     dart-sass-1_60_0 =
       pkgs.callPackage ./packages/dart-sass-snapshot {version = "1.60.0";};
     mcp-language-server = pkgs.callPackage ./packages/mcp-language-server {};
