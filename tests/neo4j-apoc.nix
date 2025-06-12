@@ -12,7 +12,7 @@ pkgs.nixosTest {
       bolt = {
         enable = true;
         listenAddress = ":7687";
-        advertisedAddress: ":7687";
+        advertisedAddress = ":7687";
       };
       extraServerConfig = "dbms.security.auth_enabled=false";
     };
