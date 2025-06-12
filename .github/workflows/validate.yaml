@@ -20,7 +20,7 @@ jobs:
       - uses: DeterminateSystems/determinate-nix-action@main
       - uses: DeterminateSystems/flakehub-cache-action@main
       - run: nix flake show
-      - run: nix build .#checks.x86_64-linux.neo4j-apoc
+      - run: nix flake check
   
   get-packages:
     runs-on: ubuntu-latest
