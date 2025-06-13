@@ -1,6 +1,6 @@
 {pkgs, ...}:
 pkgs.nixosTest {
-  name = "neo4j-apoc";
+  name = "neo4j-plugins";
   nodes.server = {
     config,
     pkgs,
@@ -15,15 +15,18 @@ pkgs.nixosTest {
         advertisedAddress = ":7687";
         tlsLevel = "DISABLED";
       };
+      plugins = [pkgs.neo4j-apoc];
       extraServerConfig = ''
         dbms.security.auth_enabled=false
         server.jvm.additional=-Xmx512m
         server.memory.heap.initial_size=256m
         server.memory.heap.max_size=512m
         server.memory.pagecache.size=256m
+        dbms.security.procedures.unrestricted=apoc.*
+        dbms.security.procedures.allowlist=apoc.*
       '';
     };
-    imports = [../modules/neo4j-apoc.nix];
+    imports = [../modules/neo4j-plugins.nix];
   };
   testScript = ''
     start_all()

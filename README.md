@@ -10,10 +10,6 @@ Current flake looks like this:
 │   ├───x86_64-darwin: development environment 'devshell'
 │   └───x86_64-linux: development environment 'devshell'
 ├───overlay: Nixpkgs overlay
-└───templates
-    ├───fat: template: A fat version of development environment. Right now it's rust-wasm + some extra packages
-    ├───rust-lite: template: A light version of rust environment for development
-    └───rust-wasm: template: A fat version of rust environment with nodejs for full-stack development
 ```
 ## Cachix
 
@@ -52,7 +48,20 @@ The flake exposes a few specialized shells:
 
  - wait-for-pr-checks: Monitor GitHub PR checks with exponential backoff. Run with `nix run .#wait-for-pr-checks`
 
-## Templates
+## Neo4j plugin module
 
-Description is self-explanatory. However, worth mentioning that `rust-lite` and `rust-wasm` use `rust-toolchain.toml` file to figure which toolchain to use.
-That means you must include `rust-src` component yourself in that file for any kind of editor support.
+The flake exposes a small NixOS module that installs declared Neo4j plugins.
+Include the module and list desired plugin packages via `services.neo4j.plugins`:
+
+```nix
+{ 
+  imports = [ flakes.neo4j-plugins.nixosModules.neo4j-plugins ];
+
+  services.neo4j = {
+    enable = true;
+    plugins = [ pkgs.neo4j-apoc ];
+    # plugin configuration goes in extraServerConfig
+  };
+}
+```
+

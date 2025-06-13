@@ -65,10 +65,10 @@
     # Expose the composed overlay at the top level
     {
       overlays.default = fullOverlay;
-      # Expose the neo4j-apoc module at the top level
+      # Expose the neo4j-plugins module at the top level
       nixosModules = {
-        neo4j-apoc = {pkgs, ...}: {
-          imports = [./modules/neo4j-apoc.nix];
+        neo4j-plugins = {pkgs, ...}: {
+          imports = [./modules/neo4j-plugins.nix];
           # Make sure the neo4j-apoc package is available
           nixpkgs.overlays = [fullOverlay];
         };
@@ -102,7 +102,7 @@
           };
       in {
         inherit packages;
-        checks.neo4j-apoc = pkgs.callPackage ./tests/neo4j-apoc.nix {};
+        checks.neo4j-plugins = pkgs.callPackage ./tests/neo4j-plugins.nix {};
 
         # ------------------------ pre-commit checks -----------------------
         checks.pre-commit-check = pre-commit-hooks.lib.${system}.run {
