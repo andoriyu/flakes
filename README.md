@@ -27,6 +27,18 @@ NOTE: Not every package is cached.
 
   The same as `fat` template. Suitable for rust full-stack development. In addition it includes tools like [`cargo-expand`](https://github.com/dtolnay/cargo-expand) and [`git-cliff`](https://github.com/orhun/git-cliff). `cargo-expand` is wrapped to use latest nightly, so it will work regardless of active toolchain unlike version in `nixpkgs`.
 
+## Additional devShells
+
+The flake exposes a few specialized shells:
+
+- `node-latest` – latest Node.js with common tooling (`yarn`, `pnpm`,
+  `typescript`, `ts-node`, `eslint`, `prettier`) and `wait-for-pr-checks`.
+- `node-lts` – Node.js LTS release with the same Node.js tooling as above
+  and `wait-for-pr-checks`.
+- `rust` – tools for Rust development (`rustc`, `cargo`, `rustfmt`, `clippy`,
+  `rust-analyzer`, `cargo-expand`, `git-cliff`, `bacon`) plus
+  `wait-for-pr-checks`.
+
 ## Packages in overlay
 
  - git-cliff
