@@ -13,15 +13,26 @@ pkgs.nixosTest {
         enable = true;
         listenAddress = ":7687";
         advertisedAddress = ":7687";
+        tlsLevel = "DISABLED";
       };
-      extraServerConfig = "dbms.security.auth_enabled=false";
+      extraServerConfig = ''
+        dbms.security.auth_enabled=false
+        server.jvm.additional=-Xmx512m
+        server.memory.heap.initial_size=256m
+        server.memory.heap.max_size=512m
+        server.memory.pagecache.size=256m
+      '';
     };
     imports = [../modules/neo4j-apoc.nix];
   };
   testScript = ''
     start_all()
     server.wait_for_unit("neo4j.service")
-    server.wait_for_open_port(7687)
+    # Add more debugging
+    server.execute("journalctl -u neo4j.service")
+    server.execute("ls -la /var/lib/neo4j/plugins/")
+    # Increase timeout for port waiting
+    server.wait_for_open_port(7687, timeout=120)
     server.succeed("cypher-shell -u neo4j -p neo4j 'RETURN 1' > /dev/null")
     server.succeed("cypher-shell -u neo4j -p neo4j 'CALL apoc.help(\"apoc\")'")
   '';
