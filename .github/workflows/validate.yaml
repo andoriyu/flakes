@@ -80,6 +80,7 @@ jobs:
   
   build:
     needs: get-packages
+    if: needs.get-packages.outputs.packages != '[]'
     runs-on: ubuntu-latest
     strategy:
       matrix:
