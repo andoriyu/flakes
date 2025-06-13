@@ -3,14 +3,86 @@
 Current flake looks like this:
 
 ```
-├───devShell
-│   ├───aarch64-darwin: development environment 'devshell'
-│   ├───aarch64-linux: development environment 'devshell'
-│   ├───i686-linux: development environment 'devshell'
-│   ├───x86_64-darwin: development environment 'devshell'
-│   └───x86_64-linux: development environment 'devshell'
-├───overlay: Nixpkgs overlay
+├───apps
+│   ├───aarch64-darwin
+│   │   ├───bark: app
+│   │   └───wait-for-pr-checks: app
+│   ├───aarch64-linux
+│   │   ├───bark: app
+│   │   └───wait-for-pr-checks: app
+│   └───x86_64-linux
+│       ├───bark: app
+│       └───wait-for-pr-checks: app
+├───devShell: development environment
+├───devShells
+│   ├───aarch64-darwin
+│   │   ├───node-latest: development environment
+│   │   ├───node-lts: development environment
+│   │   └───rust: development environment
+│   ├───aarch64-linux
+│   │   ├───node-latest: development environment
+│   │   ├───node-lts: development environment
+│   │   └───rust: development environment
+│   └───x86_64-linux
+│       ├───node-latest: development environment
+│       ├───node-lts: development environment
+│       └───rust: development environment
+├───nixosModules
+│   └───neo4j-plugins: NixOS module
+├───overlays
+│   └───default: Nixpkgs overlay
+└───packages
+    ├───aarch64-darwin
+    │   ├───bark
+    │   ├───dart-sass
+    │   ├───dart-sass-1_60_0
+    │   ├───dart-sass-1_89_2
+    │   ├───encodec
+    │   ├───github-mcp-server
+    │   ├───mcp-inspector
+    │   ├───mcp-language-server
+    │   ├───mcp-neo4j-cloud-aura-api
+    │   ├───mcp-neo4j-cypher
+    │   ├───mcp-neo4j-memory
+    │   ├───mcp-prompts
+    │   ├───neo4j-apoc
+    │   └───wait-for-pr-checks
+    ├───aarch64-linux
+    │   ├───City
+    │   ├───bark
+    │   ├───dart-sass
+    │   ├───dart-sass-1_60_0
+    │   ├───dart-sass-1_89_2
+    │   ├───encodec
+    │   ├───github-mcp-server
+    │   ├───mcp-inspector
+    │   ├───mcp-language-server
+    │   ├───mcp-neo4j-cloud-aura-api
+    │   ├───mcp-neo4j-cypher
+    │   ├───mcp-neo4j-memory
+    │   ├───mcp-prompts
+    │   ├───neo4j-apoc
+    │   ├───st-onedark
+    │   └───wait-for-pr-checks
+    └───x86_64-linux
+        ├───City
+        ├───bark
+        ├───dart-sass
+        ├───dart-sass-1_60_0
+        ├───dart-sass-1_89_2
+        ├───encodec
+        ├───github-mcp-server
+        ├───mcp-inspector
+        ├───mcp-language-server
+        ├───mcp-neo4j-cloud-aura-api
+        ├───mcp-neo4j-cypher
+        ├───mcp-neo4j-memory
+        ├───mcp-prompts
+        ├───neo4j-apoc
+        ├───st-onedark
+        └───wait-for-pr-checks
 ```
+
 ## Cachix
 
 ```
@@ -21,7 +93,10 @@ NOTE: Not every package is cached.
 
 ## Default devShell
 
-  The same as `fat` template. Suitable for rust full-stack development. In addition it includes tools like [`cargo-expand`](https://github.com/dtolnay/cargo-expand) and [`git-cliff`](https://github.com/orhun/git-cliff). `cargo-expand` is wrapped to use latest nightly, so it will work regardless of active toolchain unlike version in `nixpkgs`.
+A development environment with pre-commit hooks configured for:
+- alejandra (Nix formatter)
+- shellcheck (shell script linter)
+- statix (Nix static analysis)
 
 ## Additional devShells
 
@@ -37,16 +112,31 @@ The flake exposes a few specialized shells:
 
 ## Packages in overlay
 
- - git-cliff
- - cargo-expand-nightly (a wrapper around `cargo-expand`)
- - mcp-neo4j-cypher (Neo4j MCP server for natural language to Cypher queries)
- - mcp-neo4j-memory (Neo4j MCP server for knowledge graph memory)
- - mcp-neo4j-cloud-aura-api (Neo4j MCP server for Aura cloud service management)
- - wait-for-pr-checks (Monitor GitHub PR checks with exponential backoff)
+- `bark` - Suno's text-to-audio model
+- `City` - A C++ header-only library for comfortable urban-scale navigation
+- `dart-sass` - Latest version of Dart Sass
+- `dart-sass-1_60_0` - Dart Sass 1.60.0
+- `dart-sass-1_89_2` - Dart Sass 1.89.2
+- `encodec` - Neural audio codec from Meta
+- `github-mcp-server` - MCP server for GitHub API integration
+- `mcp-inspector` - Inspector tool for MCP servers
+- `mcp-language-server` - Language server for MCP protocol
+- `mcp-neo4j-cloud-aura-api` - Neo4j MCP server for Aura cloud service management
+- `mcp-neo4j-cypher` - Neo4j MCP server for natural language to Cypher queries
+- `mcp-neo4j-memory` - Neo4j MCP server for knowledge graph memory
+- `mcp-prompts` - Collection of MCP prompts
+- `neo4j-apoc` - Neo4j APOC plugin
+- `st-onedark` - St terminal with OneDark theme
+- `wait-for-pr-checks` - Monitor GitHub PR checks with exponential backoff
+
+## Apps
+
+- `bark` - Run Suno's text-to-audio model
+- `wait-for-pr-checks` - Monitor GitHub PR checks with exponential backoff
 
 ## Utility Scripts
 
- - wait-for-pr-checks: Monitor GitHub PR checks with exponential backoff. Run with `nix run .#wait-for-pr-checks`
+- `wait-for-pr-checks`: Monitor GitHub PR checks with exponential backoff. Run with `nix run .#wait-for-pr-checks`
 
 ## Neo4j plugin module
 
@@ -64,4 +154,3 @@ Include the module and list desired plugin packages via `services.neo4j.plugins`
   };
 }
 ```
-
