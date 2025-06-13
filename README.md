@@ -112,26 +112,26 @@ The flake exposes a few specialized shells:
 
 ## Packages in overlay
 
-- `bark` - Suno's text-to-audio model
-- `City` - A C++ header-only library for comfortable urban-scale navigation
-- `dart-sass` - Latest version of Dart Sass
+- [`bark`](https://github.com/suno-ai/bark) - Suno's text-to-audio model
+- [`City`](https://github.com/tsbarnes/City) - A C++ header-only library for comfortable urban-scale navigation
+- [`dart-sass`](https://github.com/sass/dart-sass) - Latest version of Dart Sass
 - `dart-sass-1_60_0` - Dart Sass 1.60.0
 - `dart-sass-1_89_2` - Dart Sass 1.89.2
-- `encodec` - Neural audio codec from Meta
-- `github-mcp-server` - MCP server for GitHub API integration
-- `mcp-inspector` - Inspector tool for MCP servers
-- `mcp-language-server` - Language server for MCP protocol
-- `mcp-neo4j-cloud-aura-api` - Neo4j MCP server for Aura cloud service management
-- `mcp-neo4j-cypher` - Neo4j MCP server for natural language to Cypher queries
-- `mcp-neo4j-memory` - Neo4j MCP server for knowledge graph memory
-- `mcp-prompts` - Collection of MCP prompts
-- `neo4j-apoc` - Neo4j APOC plugin
-- `st-onedark` - St terminal with OneDark theme
+- [`encodec`](https://github.com/facebookresearch/encodec) - Neural audio codec from Meta
+- [`github-mcp-server`](https://github.com/github/github-mcp-server) - MCP server for GitHub API integration
+- [`mcp-inspector`](https://github.com/modelcontextprotocol/inspector) - Inspector tool for MCP servers
+- [`mcp-language-server`](https://github.com/isaacphi/mcp-language-server) - Language server for MCP protocol
+- [`mcp-neo4j-cloud-aura-api`](https://github.com/neo4j-contrib/mcp-neo4j) - Neo4j MCP server for Aura cloud service management
+- [`mcp-neo4j-cypher`](https://github.com/neo4j-contrib/mcp-neo4j) - Neo4j MCP server for natural language to Cypher queries
+- [`mcp-neo4j-memory`](https://github.com/neo4j-contrib/mcp-neo4j) - Neo4j MCP server for knowledge graph memory
+- [`mcp-prompts`](https://github.com/sparesparrow/mcp-prompts) - Collection of MCP prompts
+- [`neo4j-apoc`](https://github.com/neo4j/apoc) - Neo4j APOC plugin
+- [`st-onedark`](https://st.suckless.org/) - St terminal with OneDark theme
 - `wait-for-pr-checks` - Monitor GitHub PR checks with exponential backoff
 
 ## Apps
 
-- `bark` - Run Suno's text-to-audio model
+- [`bark`](https://github.com/suno-ai/bark) - Run Suno's text-to-audio model
 - `wait-for-pr-checks` - Monitor GitHub PR checks with exponential backoff
 
 ## Utility Scripts
