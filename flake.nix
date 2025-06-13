@@ -113,24 +113,41 @@
         devShells = {
           node-latest = pkgs.mkShell {
             packages = with pkgs; [
-              nodejs yarn nodePackages.pnpm nodePackages.typescript
-              nodePackages.ts-node nodePackages.eslint nodePackages.prettier
+              nodejs
+              yarn
+              nodePackages.pnpm
+              nodePackages.typescript
+              nodePackages.ts-node
+              nodePackages.eslint
+              nodePackages.prettier
               packages.wait-for-pr-checks
             ];
           };
 
           node-lts = pkgs.mkShell {
             packages = with pkgs; [
-              nodejs_20 yarn nodePackages.pnpm nodePackages.typescript
-              nodePackages.ts-node nodePackages.eslint nodePackages.prettier
+              nodejs_20
+              yarn
+              nodePackages.pnpm
+              nodePackages.typescript
+              nodePackages.ts-node
+              nodePackages.eslint
+              nodePackages.prettier
               packages.wait-for-pr-checks
             ];
           };
 
           rust = pkgs.mkShell {
             packages = with pkgs; [
-              rustc cargo rustfmt clippy rust-analyzer cargo-expand git-cliff
-              bacon packages.wait-for-pr-checks
+              rustc
+              cargo
+              rustfmt
+              clippy
+              rust-analyzer
+              cargo-expand
+              git-cliff
+              bacon
+              packages.wait-for-pr-checks
             ];
           };
         };
