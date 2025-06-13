@@ -65,7 +65,14 @@
     # Expose the composed overlay at the top level
     {
       overlays.default = fullOverlay;
-      nixosModules.neo4j-apoc = import ./modules/neo4j-apoc.nix;
+      # Expose the neo4j-apoc module at the top level
+      nixosModules = {
+        neo4j-apoc = {pkgs, ...}: {
+          imports = [./modules/neo4j-apoc.nix];
+          # Make sure the neo4j-apoc package is available
+          nixpkgs.overlays = [fullOverlay];
+        };
+      };
     }
     //
     # Create per-system outputs (packages, checks, devShell, apps)
