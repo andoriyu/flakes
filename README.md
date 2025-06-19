@@ -13,17 +13,19 @@ Current flake looks like this:
 │   └───x86_64-linux
 │       ├───bark: app
 │       └───wait-for-pr-checks: app
-├───devShell: development environment
 ├───devShells
 │   ├───aarch64-darwin
+│   │   ├───default: development environment
 │   │   ├───node-latest: development environment
 │   │   ├───node-lts: development environment
 │   │   └───rust: development environment
 │   ├───aarch64-linux
+│   │   ├───default: development environment
 │   │   ├───node-latest: development environment
 │   │   ├───node-lts: development environment
 │   │   └───rust: development environment
 │   └───x86_64-linux
+│       ├───default: development environment
 │       ├───node-latest: development environment
 │       ├───node-lts: development environment
 │       └───rust: development environment
@@ -93,7 +95,8 @@ NOTE: Not every package is cached.
 
 ## Default devShell
 
-A development environment with pre-commit hooks configured for:
+The `devShells.<system>.default` environment comes with pre-commit hooks
+configured for:
 - alejandra (Nix formatter)
 - shellcheck (shell script linter)
 - statix (Nix static analysis)

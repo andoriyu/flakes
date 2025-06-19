@@ -106,7 +106,7 @@
 
         # ------------------------ pre-commit checks -----------------------
         checks.pre-commit-check = pre-commit-hooks.lib.${system}.run {
-          src = ./.;
+          src = self;
           hooks = {
             alejandra.enable = true;
             shellcheck.enable = true;
@@ -118,11 +118,10 @@
         formatter = pkgs.alejandra;
 
         # ------------------------- dev shells ----------------------------
-        devShell = pkgs.mkShell {
-          inherit (self.checks.${system}.pre-commit-check) shellHook;
-        };
-
         devShells = {
+          default = pkgs.mkShell {
+            inherit (self.checks.${system}.pre-commit-check) shellHook;
+          };
           node-latest = pkgs.mkShell {
             packages = with pkgs; [
               nodejs
@@ -166,8 +165,16 @@
 
         # --------------------------- apps -------------------------------
         apps = {
-          bark = flake-utils.lib.mkApp {drv = barkCli;};
-          wait-for-pr-checks = flake-utils.lib.mkApp {drv = packages.wait-for-pr-checks;};
+          bark =
+            flake-utils.lib.mkApp {drv = barkCli;}
+            // {
+              meta = packages.bark.meta;
+            };
+          wait-for-pr-checks =
+            flake-utils.lib.mkApp {drv = packages.wait-for-pr-checks;}
+            // {
+              meta = packages.wait-for-pr-checks.meta;
+            };
         };
       }
     ));
