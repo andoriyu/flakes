@@ -168,16 +168,16 @@
           bark =
             flake-utils.lib.mkApp {
               drv = barkCli;
-            }
-            // {
-              meta.description = "Run Suno's text-to-audio model";
+              meta = {
+                description = "Run Suno's text-to-audio model";
+              };
             };
           wait-for-pr-checks =
             flake-utils.lib.mkApp {
               drv = packages.wait-for-pr-checks;
-            }
-            // {
-              meta.description = "Monitor GitHub PR checks with exponential backoff";
+              meta = {
+                description = "Monitor GitHub PR checks with exponential backoff";
+              };
             };
         };
       }
