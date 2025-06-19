@@ -13,17 +13,19 @@ Current flake looks like this:
 │   └───x86_64-linux
 │       ├───bark: app
 │       └───wait-for-pr-checks: app
-├───devShell: development environment
 ├───devShells
 │   ├───aarch64-darwin
+│   │   ├───default: development environment
 │   │   ├───node-latest: development environment
 │   │   ├───node-lts: development environment
 │   │   └───rust: development environment
 │   ├───aarch64-linux
+│   │   ├───default: development environment
 │   │   ├───node-latest: development environment
 │   │   ├───node-lts: development environment
 │   │   └───rust: development environment
 │   └───x86_64-linux
+│       ├───default: development environment
 │       ├───node-latest: development environment
 │       ├───node-lts: development environment
 │       └───rust: development environment
@@ -91,7 +93,7 @@ cachix use andoriyu-flakes
 
 NOTE: Not every package is cached. 
 
-## Default devShell
+## Default devShell (`devShells.<system>.default`)
 
 A development environment with pre-commit hooks configured for:
 - alejandra (Nix formatter)

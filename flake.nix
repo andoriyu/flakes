@@ -75,7 +75,7 @@
       };
     }
     //
-    # Create per-system outputs (packages, checks, devShell, apps)
+    # Create per-system outputs (packages, checks, devShells, apps)
     (flake-utils.lib.eachSystem systems (
       system: let
         # Import nixpkgs with our overlay
@@ -118,11 +118,10 @@
         formatter = pkgs.alejandra;
 
         # ------------------------- dev shells ----------------------------
-        devShell = pkgs.mkShell {
-          inherit (self.checks.${system}.pre-commit-check) shellHook;
-        };
-
         devShells = {
+          default = pkgs.mkShell {
+            inherit (self.checks.${system}.pre-commit-check) shellHook;
+          };
           node-latest = pkgs.mkShell {
             packages = with pkgs; [
               nodejs
@@ -166,8 +165,20 @@
 
         # --------------------------- apps -------------------------------
         apps = {
-          bark = flake-utils.lib.mkApp {drv = barkCli;};
-          wait-for-pr-checks = flake-utils.lib.mkApp {drv = packages.wait-for-pr-checks;};
+          bark =
+            flake-utils.lib.mkApp {
+              drv = barkCli;
+            }
+            // {
+              meta.description = "Run Suno's text-to-audio model";
+            };
+          wait-for-pr-checks =
+            flake-utils.lib.mkApp {
+              drv = packages.wait-for-pr-checks;
+            }
+            // {
+              meta.description = "Monitor GitHub PR checks with exponential backoff";
+            };
         };
       }
     ));
