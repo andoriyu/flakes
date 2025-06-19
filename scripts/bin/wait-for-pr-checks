@@ -9,6 +9,7 @@
 #   -m, --max-wait SECONDS   Maximum single wait interval (default: 30 seconds)
 #   -i, --initial SECONDS    Initial wait time (default: 5 seconds)
 #   -f, --no-fail-fast       Don't exit immediately when a check fails
+#   -n, --min-checks COUNT   Minimum number of checks to wait for (default: 1)
 #   -h, --help               Show this help message
 #
 # Dependencies: gh (GitHub CLI), jq
@@ -25,6 +26,7 @@ TIMEOUT=600      # 10 minutes total timeout
 MAX_INTERVAL=30  # Maximum wait between checks
 INITIAL_WAIT=5   # Initial wait time
 FAIL_FAST=true   # Exit as soon as any check fails
+MIN_CHECKS=1     # Minimum number of checks required before evaluating
 
 # ANSI color codes
 GREEN="\033[0;32m"
@@ -46,6 +48,7 @@ Options:
   -m, --max-wait SECONDS   Maximum single wait interval (default: 30 seconds)
   -i, --initial SECONDS    Initial wait time (default: 5 seconds)
   -f, --no-fail-fast       Don't exit immediately when a check fails
+  -n, --min-checks COUNT   Minimum number of checks to wait for (default: 1)
   -h, --help               Show this help message
 EOF
     exit "${1:-0}"
@@ -138,6 +141,11 @@ while [ $# -gt 0 ]; do
             INITIAL_WAIT="$1"
             validate_number "$INITIAL_WAIT"
             ;;
+        -n|--min-checks)
+            shift
+            MIN_CHECKS="$1"
+            validate_number "$MIN_CHECKS"
+            ;;
         -f|--no-fail-fast)
             FAIL_FAST=false
             ;;
@@ -180,12 +188,27 @@ while [ "$all_complete" = false ] && [ "$total_wait" -lt "$TIMEOUT" ]; do
         exit 1
     fi
     
+    check_count=$(echo "$checks" | "$JQ_BIN" 'length')
+
     # Display current status in a neat table
     print_table_header
     echo "$checks" | "$JQ_BIN" -r '.[] | [.name, .state] | @tsv' | while IFS="$(printf '\t')" read -r name state; do
         print_table_row "$name" "$state"
     done
     print_table_footer
+
+    if [ "$check_count" -lt "$MIN_CHECKS" ]; then
+        echo "${YELLOW}Waiting for PR checks to appear ($check_count/$MIN_CHECKS)...${RESET}"
+        wait_time=$((wait_time * 2))
+        if [ "$wait_time" -gt "$MAX_INTERVAL" ]; then
+            wait_time="$MAX_INTERVAL"
+        fi
+        echo "Waiting $wait_time seconds..."
+        sleep "$wait_time"
+        total_wait=$((total_wait + wait_time))
+        attempt=$((attempt + 1))
+        continue
+    fi
     
     # Count pending checks (including QUEUED status)
     pending_count=$(echo "$checks" | "$JQ_BIN" -r '[.[] | select(.state == "PENDING" or .state == "IN_PROGRESS" or .state == "QUEUED")] | length')

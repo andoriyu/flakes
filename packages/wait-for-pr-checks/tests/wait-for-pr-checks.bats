@@ -46,3 +46,9 @@ script="${WAIT_FOR_PR_CHECKS_BIN:-$(realpath "$BATS_TEST_DIRNAME/../../../script
   run "$script" -t 1 -i 1
   [ "$status" -eq 2 ]
 }
+
+@test "waits until minimum checks are present" {
+  write_gh_stub '[{"name":"ci","state":"SUCCESS","link":"https://example.com"}]'
+  run "$script" --min-checks 2 -t 1 -i 1
+  [ "$status" -eq 2 ]
+}
