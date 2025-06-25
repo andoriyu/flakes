@@ -24,7 +24,7 @@ buildNpmPackage rec {
   '';
 
   makeWrapperArgs = [
-    "--prefix PATH : ${lib.makeBinPath [ nodejs ]}"
+    "--prefix PATH : ${lib.makeBinPath [nodejs]}"
   ];
 
   doCheck = false;
