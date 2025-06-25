@@ -37,6 +37,7 @@ in
     github-mcp-server = pkgs.callPackage ./packages/github-mcp-server {};
     mcp-inspector = pkgs.callPackage ./packages/mcp-inspector {};
     mcp-prompts = pkgs.callPackage ./packages/mcp-prompts {};
+    gemini-cli = pkgs.callPackage ./packages/gemini-cli {};
     neo4j-apoc = neo4j-apoc-pkg;
   }
   // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
