@@ -30,6 +30,7 @@ buildNpmPackage rec {
   doCheck = false;
 
   meta = with lib; {
+    mainProgram = "gemini";
     description = "Gemini CLI for interacting with Google's Gemini models";
     homepage = "https://github.com/google-gemini/gemini-cli";
     license = licenses.asl20;
