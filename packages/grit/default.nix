@@ -13,7 +13,7 @@ rustPlatform.buildRustPackage rec {
     owner = "honeycombio";
     repo = "gritql";
     rev = "1477fecd90e967b7e298dc3e75ff6ed103e152a8";
-    sha256 = "sha256-ZtBdM7qA4QOAxJ6eREmremjnFJm+CYgZCMnwczmPmyc=";
+    sha256 = "sha256-ZruQYnqk4epxp0c/9P5dNrj2d5uJy++uwuIEmJ5l3Ls=";
     fetchSubmodules = true;
   };
 
