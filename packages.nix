@@ -35,6 +35,7 @@ in
     wait-for-pr-checks = pkgs.callPackage ./packages/wait-for-pr-checks {};
 
     github-mcp-server = pkgs.callPackage ./packages/github-mcp-server {};
+    grit = pkgs.callPackage ./packages/grit {};
     gemini-cli = pkgs.callPackage ./packages/gemini-cli {};
     mcp-inspector = pkgs.callPackage ./packages/mcp-inspector {};
     mcp-prompts = pkgs.callPackage ./packages/mcp-prompts {};

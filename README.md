@@ -119,6 +119,7 @@ The flake exposes a few specialized shells:
 - `dart-sass-1_89_2` - Dart Sass 1.89.2
 - [`encodec`](https://github.com/facebookresearch/encodec) - Neural audio codec from Meta
 - [`github-mcp-server`](https://github.com/github/github-mcp-server) - MCP server for GitHub API integration
+- [`grit`](https://github.com/honeycombio/gritql) - GritQL CLI for code search and refactoring
 - [`mcp-inspector`](https://github.com/modelcontextprotocol/inspector) - Inspector tool for MCP servers
 - [`mcp-language-server`](https://github.com/isaacphi/mcp-language-server) - Language server for MCP protocol
 - [`mcp-neo4j-cloud-aura-api`](https://github.com/neo4j-contrib/mcp-neo4j) - Neo4j MCP server for Aura cloud service management
