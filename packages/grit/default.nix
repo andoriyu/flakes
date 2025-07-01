@@ -17,7 +17,7 @@ rustPlatform.buildRustPackage rec {
     fetchSubmodules = true;
   };
 
-  cargoHash = "sha256-UGZ5J/7DeA847p700EMywxVMnmv1In00mgmd3rlKFuU=";
+  cargoHash = "sha256-WNUqNATPtWfCQX5jpRD0wgLd/fOlJflumNohIwXcFK8=";
 
   nativeBuildInputs = [pkg-config];
   buildInputs = [openssl];
