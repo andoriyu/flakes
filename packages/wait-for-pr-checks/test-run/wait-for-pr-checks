@@ -1,0 +1,350 @@
+#!/bin/sh
+# 
+# wait-for-pr-checks - Monitor GitHub PR checks with exponential backoff
+#
+# Usage: wait-for-checks [options]
+#
+# Options:
+#   -t, --timeout SECONDS    Maximum total wait time (default: 600 seconds)
+#   -m, --max-wait SECONDS   Maximum single wait interval (default: 30 seconds)
+#   -i, --initial SECONDS    Initial wait time (default: 5 seconds)
+#   -f, --no-fail-fast       Don't exit immediately when a check fails
+#   -j, --json               Output in JSON format (for machine readability)
+#   -h, --help               Show this help message
+#
+# Dependencies: gh (GitHub CLI), jq
+# Use GH_BIN and JQ_BIN env variables to override the commands
+
+set -e  # Exit immediately if a command exits with non-zero status
+
+# Allow overriding gh and jq for testing
+GH_BIN="${GH_BIN:-gh}"
+JQ_BIN="${JQ_BIN:-jq}"
+
+# Default configuration with environment variable overrides
+TIMEOUT=${WAIT_PR_TIMEOUT:-600}      # 10 minutes total timeout
+MAX_INTERVAL=${WAIT_PR_MAX_INTERVAL:-30}  # Maximum wait between checks
+INITIAL_WAIT=${WAIT_PR_INITIAL_WAIT:-5}   # Initial wait time
+FAIL_FAST=${WAIT_PR_FAIL_FAST:-true}   # Exit as soon as any check fails
+JSON_OUTPUT=${WAIT_PR_JSON_OUTPUT:-false}  # Output in JSON format
+
+# ANSI color codes
+GREEN="\033[0;32m"
+RED="\033[0;31m"
+YELLOW="\033[0;33m"
+CYAN="\033[0;36m"
+BOLD="\033[1m"
+RESET="\033[0m"
+
+# Function for error handling
+handle_error() {
+  local exit_code=$1
+  local message=$2
+  
+  if [ "$JSON_OUTPUT" = "true" ]; then
+    echo "{\"status\":\"error\",\"message\":\"$message\",\"exit_code\":$exit_code}"
+  else
+    echo "${RED}Error: $message${RESET}" >&2
+  fi
+  
+  exit "$exit_code"
+}
+
+# Function to display usage information
+usage() {
+    cat <<EOF
+Usage: wait-for-checks [options]
+
+Monitor GitHub PR checks with exponential backoff until completion or timeout.
+
+Options:
+  -t, --timeout SECONDS    Maximum total wait time (default: 600 seconds)
+  -m, --max-wait SECONDS   Maximum single wait interval (default: 30 seconds)
+  -i, --initial SECONDS    Initial wait time (default: 5 seconds)
+  -f, --no-fail-fast       Don't exit immediately when a check fails
+  -j, --json               Output in JSON format (for machine readability)
+  -h, --help               Show this help message
+EOF
+    exit "${1:-0}"
+}
+
+# Function to check dependencies
+check_dependencies() {
+    for cmd in "$GH_BIN" "$JQ_BIN"; do
+        if ! command -v "$cmd" >/dev/null 2>&1; then
+            handle_error 1 "Required command '$cmd' not found. Please install the missing dependencies and try again."
+        fi
+    done
+}
+
+# Function to validate numeric input
+validate_number() {
+    if ! echo "$1" | grep -q '^[0-9]\+$'; then
+        handle_error 1 "'$1' is not a valid number"
+    fi
+}
+
+# Function to print a table row with proper formatting
+print_table_row() {
+    name="$1"
+    state="$2"
+    
+    # Truncate name if too long
+    if [ ${#name} -gt 30 ]; then
+        name="$(echo "$name" | cut -c 1-27)..."
+    fi
+    
+    # Pad name to 30 characters
+    printf "│ %-30s │ " "$name"
+    
+    # Color the state based on its value
+    case "$state" in
+        SUCCESS)
+            printf "${GREEN}%-12s${RESET}" "$state"
+            ;;
+        FAILURE)
+            printf "${RED}%-12s${RESET}" "$state"
+            ;;
+        PENDING)
+            printf "${YELLOW}%-12s${RESET}" "$state"
+            ;;
+        IN_PROGRESS)
+            printf "${YELLOW}%-12s${RESET}" "$state"
+            ;;
+        QUEUED)
+            printf "${YELLOW}%-12s${RESET}" "$state"
+            ;;
+        *)
+            printf "%-12s" "$state"
+            ;;
+    esac
+    
+    printf " │\n"
+}
+
+# Function to print table header
+print_table_header() {
+    echo "┌────────────────────────────────┬──────────────┐"
+    echo "│ ${BOLD}Check Name${RESET}                     │ ${BOLD}Status${RESET}       │"
+    echo "├────────────────────────────────┼──────────────┤"
+}
+
+# Function to print table footer
+print_table_footer() {
+    echo "└────────────────────────────────┴──────────────┘"
+}
+
+# Function to fetch check status
+fetch_check_status() {
+    "$GH_BIN" pr checks --json name,state,link 2>/dev/null || 
+        handle_error 1 "Failed to get PR checks. Are you in a git repository with an open PR?"
+}
+
+# Function to display check status
+display_check_status() {
+    local checks="$1"
+    
+    if [ "$JSON_OUTPUT" = "true" ]; then
+        # In JSON mode, we don't display the table
+        return
+    fi
+    
+    print_table_header
+    echo "$checks" | "$JQ_BIN" -r '.[] | [.name, .state] | @tsv' | while IFS="$(printf '\t')" read -r name state; do
+        print_table_row "$name" "$state"
+    done
+    print_table_footer
+}
+
+# Function to count pending checks
+count_pending_checks() {
+    local checks="$1"
+    echo "$checks" | "$JQ_BIN" -r '[.[] | select(.state == "PENDING" or .state == "IN_PROGRESS" or .state == "QUEUED")] | length'
+}
+
+# Function to count failed checks
+count_failed_checks() {
+    local checks="$1"
+    echo "$checks" | "$JQ_BIN" -r '[.[] | select(.state != "SUCCESS" and .state != "PENDING" and .state != "IN_PROGRESS" and .state != "QUEUED")] | length'
+}
+
+# Function to show failed check details
+show_failed_check_details() {
+    local checks="$1"
+    
+    if [ "$JSON_OUTPUT" = "true" ]; then
+        # In JSON mode, we don't display the details (they're already in the JSON)
+        return
+    fi
+    
+    printf "\n%sFailed checks details:%s\n" "$YELLOW" "$RESET"
+    echo "$checks" | "$JQ_BIN" -r '.[] | select(.state != "SUCCESS" and .state != "PENDING" and .state != "IN_PROGRESS" and .state != "QUEUED") | "- \(.name)\n  URL: \(.link)\n"'
+}
+
+# Function to output JSON status
+output_json_status() {
+    local status="$1"
+    local checks="$2"
+    local pending_count="$3"
+    local failed_count="$4"
+    local total_wait="$5"
+    
+    # Create a JSON object with the current status
+    echo "{\"status\":\"$status\",\"checks\":$checks,\"pending\":$pending_count,\"failed\":$failed_count,\"elapsed\":$total_wait}"
+}
+
+# Signal handling for clean exit
+cleanup() {
+  if [ "$JSON_OUTPUT" = "true" ]; then
+    echo "{\"status\":\"interrupted\",\"message\":\"Interrupted by user\",\"exit_code\":130}"
+  else
+    echo -e "\n${YELLOW}Interrupted by user. Exiting...${RESET}"
+  fi
+  exit 130
+}
+
+trap cleanup INT TERM
+
+# Parse command line arguments
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -t|--timeout)
+            shift
+            TIMEOUT="$1"
+            validate_number "$TIMEOUT"
+            ;;
+        -m|--max-wait)
+            shift
+            MAX_INTERVAL="$1"
+            validate_number "$MAX_INTERVAL"
+            ;;
+        -i|--initial)
+            shift
+            INITIAL_WAIT="$1"
+            validate_number "$INITIAL_WAIT"
+            ;;
+        -f|--no-fail-fast)
+            FAIL_FAST=false
+            ;;
+        -j|--json)
+            JSON_OUTPUT=true
+            ;;
+        -h|--help)
+            usage
+            ;;
+        *)
+            handle_error 1 "Unknown option: $1"
+            ;;
+    esac
+    shift
+done
+
+# Check for required dependencies
+check_dependencies
+
+# Main execution
+if [ "$JSON_OUTPUT" != "true" ]; then
+    echo "${CYAN}Monitoring PR checks...${RESET}"
+    echo "Press Ctrl+C to stop monitoring"
+    if [ "$FAIL_FAST" = "true" ]; then
+        echo "Fail-fast mode: Will exit as soon as any check fails"
+    else
+        echo "No fail-fast mode: Will wait for all checks to complete"
+    fi
+    echo "-----------------------------------"
+fi
+
+attempt=1
+wait_time="$INITIAL_WAIT"
+total_wait=0
+all_complete=false
+
+while [ "$all_complete" = false ] && [ "$total_wait" -lt "$TIMEOUT" ]; do
+    if [ "$JSON_OUTPUT" != "true" ]; then
+        echo "${BOLD}Check attempt $attempt (Total wait: ${total_wait}s):${RESET}"
+    fi
+    
+    # Get check status in JSON format for better parsing
+    checks=$(fetch_check_status)
+    
+    # Display current status in a neat table
+    display_check_status "$checks"
+    
+    # Count pending and failed checks
+    pending_count=$(count_pending_checks "$checks")
+    failed_count=$(count_failed_checks "$checks")
+    
+    if [ "$JSON_OUTPUT" != "true" ]; then
+        echo ""
+        echo "$pending_count checks still pending"
+    fi
+    
+    # Check for failures if in fail-fast mode
+    if [ "$FAIL_FAST" = "true" ] && [ "$failed_count" -gt 0 ]; then
+        if [ "$JSON_OUTPUT" = "true" ]; then
+            output_json_status "failed" "$checks" "$pending_count" "$failed_count" "$total_wait"
+        else
+            echo "${RED}❌ Some checks failed! (Exiting early due to fail-fast mode)${RESET}"
+            # Show detailed information for failed checks
+            show_failed_check_details "$checks"
+        fi
+        exit 1
+    fi
+    
+    # If no pending checks, we're done
+    if [ "$pending_count" -eq 0 ]; then
+        all_complete=true
+        
+        if [ "$failed_count" -gt 0 ]; then
+            if [ "$JSON_OUTPUT" = "true" ]; then
+                output_json_status "failed" "$checks" "$pending_count" "$failed_count" "$total_wait"
+            else
+                echo "${RED}❌ Some checks failed!${RESET}"
+                # Show detailed information for failed checks
+                show_failed_check_details "$checks"
+            fi
+            exit 1
+        else
+            if [ "$JSON_OUTPUT" = "true" ]; then
+                output_json_status "success" "$checks" "$pending_count" "$failed_count" "$total_wait"
+            else
+                echo "${GREEN}✅ All checks passed successfully!${RESET}"
+            fi
+            exit 0
+        fi
+    else
+        # Calculate next wait time with exponential backoff
+        wait_time=$((wait_time * 2))
+        
+        # Cap at MAX_INTERVAL
+        if [ "$wait_time" -gt "$MAX_INTERVAL" ]; then
+            wait_time="$MAX_INTERVAL"
+        fi
+        
+        if [ "$JSON_OUTPUT" = "true" ]; then
+            output_json_status "pending" "$checks" "$pending_count" "$failed_count" "$total_wait"
+        else
+            echo "Waiting $wait_time seconds..."
+        fi
+        
+        sleep "$wait_time"
+        total_wait=$((total_wait + wait_time))
+        attempt=$((attempt + 1))
+        
+        # Check if we're approaching the timeout
+        remaining=$((TIMEOUT - total_wait))
+        if [ "$remaining" -lt "$wait_time" ] && [ "$JSON_OUTPUT" != "true" ]; then
+            echo "${YELLOW}⚠️ Approaching timeout limit. $remaining seconds remaining.${RESET}"
+        fi
+    fi
+done
+
+# Check if we timed out
+if [ "$total_wait" -ge "$TIMEOUT" ]; then
+    if [ "$JSON_OUTPUT" = "true" ]; then
+        output_json_status "timeout" "$checks" "$pending_count" "$failed_count" "$total_wait"
+    else
+        echo "${YELLOW}⏰ Timeout reached after $total_wait seconds. Some checks are still pending.${RESET}"
+    fi
+    exit 2
+fi

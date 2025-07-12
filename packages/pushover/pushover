@@ -1,0 +1,113 @@
+#!/bin/sh
+#
+# pushover - Simple command-line client for Pushover notifications
+#
+# Usage: pushover [options] <message>
+#
+# Options:
+#   -t TITLE    Set notification title
+#   -p NUM      Set priority (-2 to 2, default 0)
+#   -d DEVICE   Send to specific device
+#   -u URL      Add URL to notification
+#   -l TEXT     Set URL title
+#   -s SOUND    Set notification sound
+#   -c FILE     Use alternative config file
+#   -h          Show this help message
+
+# Default config file location
+CONFIG_FILE="${PUSHOVER_CONFIG:-$HOME/.config/pushover/config}"
+
+# Function to display usage information
+usage() {
+  echo "Usage: pushover [options] <message>"
+  echo ""
+  echo "Send notifications via Pushover API."
+  echo ""
+  echo "Options:"
+  echo "  -t TITLE    Set notification title"
+  echo "  -p NUM      Set priority (-2 to 2, default 0)"
+  echo "  -d DEVICE   Send to specific device"
+  echo "  -u URL      Add URL to notification"
+  echo "  -l TEXT     Set URL title"
+  echo "  -s SOUND    Set notification sound"
+  echo "  -c FILE     Use alternative config file"
+  echo "  -h          Show this help message"
+  echo ""
+  exit "${1:-0}"
+}
+
+# Parse command line arguments
+TITLE=""
+PRIORITY="0"
+DEVICE=""
+URL=""
+URL_TITLE=""
+SOUND=""
+MESSAGE=""
+
+while getopts "t:p:d:u:l:s:c:h" opt; do
+  case "$opt" in
+    t) TITLE="$OPTARG" ;;
+    p) PRIORITY="$OPTARG" ;;
+    d) DEVICE="$OPTARG" ;;
+    u) URL="$OPTARG" ;;
+    l) URL_TITLE="$OPTARG" ;;
+    s) SOUND="$OPTARG" ;;
+    c) CONFIG_FILE="$OPTARG" ;;
+    h) usage ;;
+    \?) echo "Error: Invalid option -$OPTARG" >&2; usage 1 ;;
+  esac
+done
+
+# Shift processed options
+shift $((OPTIND-1))
+
+# Get message from remaining arguments
+MESSAGE="$*"
+
+# Check if message is provided
+if [ -z "$MESSAGE" ]; then
+  echo "Error: Message is required" >&2
+  usage 1
+fi
+
+# Get token and user from environment or config file
+TOKEN="${PUSHOVER_TOKEN:-}"
+USER="${PUSHOVER_USER:-}"
+
+# Check if config file exists and source it if TOKEN or USER not set
+if [ -z "$TOKEN" ] || [ -z "$USER" ]; then
+  if [ -f "$CONFIG_FILE" ]; then
+    # shellcheck disable=SC1090
+    . "$CONFIG_FILE"
+  else
+    echo "Warning: Config file not found at $CONFIG_FILE" >&2
+  fi
+fi
+
+# Check if required variables are set
+if [ -z "$TOKEN" ] || [ -z "$USER" ]; then
+  echo "Error: TOKEN and USER must be set via environment variables or config file" >&2
+  exit 1
+fi
+
+# Build the curl command
+curl -s \
+  --form-string "token=$TOKEN" \
+  --form-string "user=$USER" \
+  --form-string "message=$MESSAGE" \
+  $([ -n "$TITLE" ] && echo "--form-string title=$TITLE") \
+  $([ -n "$PRIORITY" ] && echo "--form-string priority=$PRIORITY") \
+  $([ -n "$DEVICE" ] && echo "--form-string device=$DEVICE") \
+  $([ -n "$URL" ] && echo "--form-string url=$URL") \
+  $([ -n "$URL_TITLE" ] && echo "--form-string url_title=$URL_TITLE") \
+  $([ -n "$SOUND" ] && echo "--form-string sound=$SOUND") \
+  https://api.pushover.net/1/messages.json > /dev/null
+
+# Check exit status
+if [ $? -eq 0 ]; then
+  echo "Notification sent successfully"
+else
+  echo "Error sending notification" >&2
+  exit 1
+fi

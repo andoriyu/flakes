@@ -33,11 +33,13 @@ in
 
     # Utility scripts
     wait-for-pr-checks = pkgs.callPackage ./packages/wait-for-pr-checks {};
+    pushover-cli = pkgs.callPackage ./packages/pushover {};
 
     github-mcp-server = pkgs.callPackage ./packages/github-mcp-server {};
     mcp-inspector = pkgs.callPackage ./packages/mcp-inspector {};
     mcp-prompts = pkgs.callPackage ./packages/mcp-prompts {};
     neo4j-apoc = neo4j-apoc-pkg;
+    catppuccin-gitea = pkgs.callPackage ./packages/catppuccin-gitea {};
   }
   // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
     City = pkgs.callPackage ./packages/city-theme {};

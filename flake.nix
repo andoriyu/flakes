@@ -50,6 +50,7 @@
         mcp-neo4j-memory
         mcp-neo4j-cloud-aura-api
         neo4j-apoc
+        pushover-cli
         wait-for-pr-checks
         ;
     };
@@ -65,11 +66,20 @@
     # Expose the composed overlay at the top level
     {
       overlays.default = fullOverlay;
-      # Expose the neo4j-plugins module at the top level
+      # Expose modules at the top level
       nixosModules = {
         neo4j-plugins = {pkgs, ...}: {
           imports = [./modules/neo4j-plugins.nix];
           # Make sure the neo4j-apoc package is available
+          nixpkgs.overlays = [fullOverlay];
+        };
+      };
+
+      # Home Manager modules
+      homeManagerModules = {
+        pushover = {pkgs, ...}: {
+          imports = [./modules/home-manager/pushover.nix];
+          # Make sure the pushover-cli package is available
           nixpkgs.overlays = [fullOverlay];
         };
       };
