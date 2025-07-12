@@ -154,3 +154,7 @@ Include the module and list desired plugin packages via `services.neo4j.plugins`
   };
 }
 ```
+
+## License
+
+This project is licensed under the [BSD 2-Clause](LICENSE) license.

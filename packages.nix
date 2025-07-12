@@ -36,6 +36,7 @@ in
     pushover-cli = pkgs.callPackage ./packages/pushover {};
 
     github-mcp-server = pkgs.callPackage ./packages/github-mcp-server {};
+    gemini-cli = pkgs.callPackage ./packages/gemini-cli {};
     mcp-inspector = pkgs.callPackage ./packages/mcp-inspector {};
     mcp-prompts = pkgs.callPackage ./packages/mcp-prompts {};
     neo4j-apoc = neo4j-apoc-pkg;
