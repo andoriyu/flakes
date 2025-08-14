@@ -46,6 +46,7 @@ Current flake looks like this:
     │   ├───mcp-neo4j-memory
     │   ├───mcp-prompts
     │   ├───neo4j-apoc
+    │   ├───searxng-mcp
     │   └───wait-for-pr-checks
     ├───aarch64-linux
     │   ├───City
@@ -62,6 +63,7 @@ Current flake looks like this:
     │   ├───mcp-neo4j-memory
     │   ├───mcp-prompts
     │   ├───neo4j-apoc
+    │   ├───searxng-mcp
     │   ├───st-onedark
     │   └───wait-for-pr-checks
     └───x86_64-linux
@@ -79,6 +81,7 @@ Current flake looks like this:
         ├───mcp-neo4j-memory
         ├───mcp-prompts
         ├───neo4j-apoc
+        ├───searxng-mcp
         ├───st-onedark
         └───wait-for-pr-checks
 ```
@@ -125,6 +128,7 @@ The flake exposes a few specialized shells:
 - [`mcp-neo4j-cypher`](https://github.com/neo4j-contrib/mcp-neo4j) - Neo4j MCP server for natural language to Cypher queries
 - [`mcp-neo4j-memory`](https://github.com/neo4j-contrib/mcp-neo4j) - Neo4j MCP server for knowledge graph memory
 - [`mcp-prompts`](https://github.com/sparesparrow/mcp-prompts) - Collection of MCP prompts
+- [`searxng-mcp`](https://github.com/tisDDM/searxng-mcp) - MCP server for performing web searches using SearXNG
 - [`neo4j-apoc`](https://github.com/neo4j/apoc) - Neo4j APOC plugin
 - [`st-onedark`](https://st.suckless.org/) - St terminal with OneDark theme
 - `wait-for-pr-checks` - Monitor GitHub PR checks with exponential backoff
