@@ -39,6 +39,7 @@ in
     gemini-cli = pkgs.callPackage ./packages/gemini-cli {};
     mcp-inspector = pkgs.callPackage ./packages/mcp-inspector {};
     mcp-prompts = pkgs.callPackage ./packages/mcp-prompts {};
+    readable-name-generator = pkgs.callPackage ./packages/readable-name-generator {};
     searxng-mcp = pkgs.callPackage ./packages/searxng-mcp {};
     neo4j-apoc = neo4j-apoc-pkg;
     catppuccin-gitea = pkgs.callPackage ./packages/catppuccin-gitea {};
