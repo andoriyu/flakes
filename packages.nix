@@ -43,6 +43,7 @@ in
     searxng-mcp = pkgs.callPackage ./packages/searxng-mcp {};
     neo4j-apoc = neo4j-apoc-pkg;
     catppuccin-gitea = pkgs.callPackage ./packages/catppuccin-gitea {};
+    plex-pass = pkgs.callPackage ./packages/plex-pass {};
   }
   // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
     City = pkgs.callPackage ./packages/city-theme {};
