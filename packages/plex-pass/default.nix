@@ -24,7 +24,6 @@ let
 in
 base.overrideAttrs (old: rec {
   pname = "plexmediaserver-plexpass";
-  inherit version;
   name = "${pname}-${version}";
 
   passthru = old.passthru // {
