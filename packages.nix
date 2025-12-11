@@ -47,6 +47,7 @@ in
   }
   // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
     City = pkgs.callPackage ./packages/city-theme {};
+    inav-configurator = pkgs.callPackage ./packages/inav-configurator {};
     st-onedark = st_0_8_14.overrideAttrs (oldAttrs: rec {
       configFile = ./packages/st/config.def.h-onedark;
       postPatch = ''
